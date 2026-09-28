@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schemalist gettext-domain="scratchpad@vgabesz92.github.io">
+<schemalist gettext-domain="scratchpad@gavnir">
   <schema id="org.gnome.shell.extensions.scratchpad"
           path="/org/gnome/shell/extensions/scratchpad/">
 
