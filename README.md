@@ -12,6 +12,22 @@ Minimalista gyorsjegyzet-kezelő a GNOME felső paneljén.
 
 Támogatott GNOME Shell verzió: **50**, **51**.
 
+## Képernyőképek
+
+<p align="center">
+  <img src="screenshots/main.png" alt="Scratchpad GNOME Shell felület" width="720">
+</p>
+
+<details>
+<summary><b>További képernyőképek megtekintése (Beállítások, Mentett fájlok fiók)</b></summary>
+<br>
+
+| Beállítások (Libadwaita) | Fájlkezelő és előzmények |
+| :---: | :---: |
+| <img src="screenshots/settings.png" alt="Beállítások ablak" width="360"> | <img src="screenshots/files.png" alt="Mentett fájlok" width="360"> |
+
+</details>
+
 ## Funkciók
 
 - **Három független jegyzetlap (Pad)** — Jegyzetek (*Notes*), Töredékek (*Snippets*), Piszkozat (*Scratch*) – egyedileg átnevezhető lapok.
@@ -109,6 +125,22 @@ packaging/     arch pacman PKGBUILD és telepítő
 Minimalist quick notes in the GNOME top bar.
 
 Supports GNOME Shell **50** and **51**.
+
+## Screenshots
+
+<p align="center">
+  <img src="screenshots/main.png" alt="Scratchpad for GNOME Shell" width="720">
+</p>
+
+<details>
+<summary><b>View more screenshots (Preferences, Saved Files drawer)</b></summary>
+<br>
+
+| Preferences (Libadwaita) | Saved Files & History |
+| :---: | :---: |
+| <img src="screenshots/settings.png" alt="Preferences Window" width="360"> | <img src="screenshots/files.png" alt="Saved Files" width="360"> |
+
+</details>
 
 ## Features
 
