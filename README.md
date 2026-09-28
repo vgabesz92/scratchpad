@@ -19,12 +19,12 @@ Támogatott GNOME Shell verzió: **50**, **51**.
 </p>
 
 <details>
-<summary><b>További képernyőképek megtekintése (Beállítások, Mentett fájlok fiók)</b></summary>
+<summary><b>További képernyőképek megtekintése (Beállítások, Kódok)</b></summary>
 <br>
 
 | Beállítások (Libadwaita) | Fájlkezelő és előzmények |
 | :---: | :---: |
-| <img src="screenshots/settings.png" alt="Beállítások ablak" width="360"> | <img src="screenshots/files.png" alt="Mentett fájlok" width="360"> |
+| <img src="screenshots/settings.png" alt="Beállítások ablak" width="360"> | <img src="screenshots/code.png" alt="Kódok" width="360"> |
 
 </details>
 
@@ -136,9 +136,9 @@ Supports GNOME Shell **50** and **51**.
 <summary><b>View more screenshots (Preferences, Saved Files drawer)</b></summary>
 <br>
 
-| Preferences (Libadwaita) | Saved Files & History |
+| Preferences (Libadwaita) | Codes |
 | :---: | :---: |
-| <img src="screenshots/settings.png" alt="Preferences Window" width="360"> | <img src="screenshots/files.png" alt="Saved Files" width="360"> |
+| <img src="screenshots/settings.png" alt="Preferences Window" width="360"> | <img src="screenshots/code.png" alt="Codes" width="360"> |
 
 </details>
 
