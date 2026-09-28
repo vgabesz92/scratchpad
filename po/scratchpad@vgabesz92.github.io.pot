@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: scratchpad\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-28 11:11+0200\n"
+"POT-Creation-Date: 2026-09-28 17:45+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,9 +23,9 @@ msgstr ""
 msgid "Today, %s:%s"
 msgstr ""
 
-#: indicator.js:130 indicator.js:1481 indicator.js:1486 indicator.js:1501
-#: indicator.js:1505 indicator.js:1620 indicator.js:1624 indicator.js:1678
-#: indicator.js:1681 prefs.js:264
+#: indicator.js:130 indicator.js:1480 indicator.js:1485 indicator.js:1500
+#: indicator.js:1504 indicator.js:1619 indicator.js:1623 indicator.js:1677
+#: indicator.js:1680 prefs.js:264
 msgid "Scratchpad"
 msgstr ""
 
@@ -65,16 +65,16 @@ msgstr ""
 msgid "Jot down a quick thought, command, or snippet…"
 msgstr ""
 
-#: indicator.js:425 indicator.js:437 indicator.js:520 indicator.js:1614
+#: indicator.js:425 indicator.js:437 indicator.js:520 indicator.js:1613
 msgid "Save to file"
 msgstr ""
 
-#: indicator.js:426 indicator.js:454 indicator.js:521 indicator.js:1276
-#: indicator.js:1331
+#: indicator.js:426 indicator.js:454 indicator.js:521 indicator.js:1275
+#: indicator.js:1330
 msgid "History"
 msgstr ""
 
-#: indicator.js:427 indicator.js:464 indicator.js:522 indicator.js:1672
+#: indicator.js:427 indicator.js:464 indicator.js:522 indicator.js:1671
 msgid "Export…"
 msgstr ""
 
@@ -86,17 +86,17 @@ msgstr ""
 msgid "Clear"
 msgstr ""
 
-#: indicator.js:620 indicator.js:1141 indicator.js:1152 indicator.js:1633
+#: indicator.js:620 indicator.js:1141 indicator.js:1152 indicator.js:1632
 #: prefs.js:92
 msgid "Notes"
 msgstr ""
 
-#: indicator.js:620 indicator.js:1141 indicator.js:1152 indicator.js:1633
+#: indicator.js:620 indicator.js:1141 indicator.js:1152 indicator.js:1632
 #: prefs.js:92
 msgid "Snippets"
 msgstr ""
 
-#: indicator.js:620 indicator.js:1141 indicator.js:1152 indicator.js:1633
+#: indicator.js:620 indicator.js:1141 indicator.js:1152 indicator.js:1632
 #: prefs.js:92
 msgid "Scratch"
 msgstr ""
@@ -136,92 +136,92 @@ msgstr ""
 msgid "Copied!"
 msgstr ""
 
-#: indicator.js:1275 indicator.js:1330
+#: indicator.js:1274 indicator.js:1329
 #, javascript-format
 msgid "History (%d)"
 msgstr ""
 
-#: indicator.js:1341
+#: indicator.js:1340
 msgid "Close"
 msgstr ""
 
-#: indicator.js:1411
+#: indicator.js:1410
 msgid "Delete file"
 msgstr ""
 
-#: indicator.js:1425
+#: indicator.js:1424
 msgid "No saved files yet"
 msgstr ""
 
-#: indicator.js:1449
+#: indicator.js:1448
 msgid "Browse other files…"
 msgstr ""
 
-#: indicator.js:1481
+#: indicator.js:1480
 #, javascript-format
 msgid "Loaded “%s”"
 msgstr ""
 
-#: indicator.js:1486
+#: indicator.js:1485
 #, javascript-format
 msgid "Failed to load file: %s"
 msgstr ""
 
-#: indicator.js:1501
+#: indicator.js:1500
 #, javascript-format
 msgid "“%s” deleted"
 msgstr ""
 
-#: indicator.js:1505
+#: indicator.js:1504
 #, javascript-format
 msgid "Failed to delete file: %s"
 msgstr ""
 
-#: indicator.js:1526 indicator.js:1690
+#: indicator.js:1525 indicator.js:1689
 msgid "Markdown files (*.md)"
 msgstr ""
 
-#: indicator.js:1527 indicator.js:1691
+#: indicator.js:1526 indicator.js:1690
 msgid "Text files (*.txt)"
 msgstr ""
 
-#: indicator.js:1528 indicator.js:1692
+#: indicator.js:1527 indicator.js:1691
 msgid "All files"
 msgstr ""
 
-#: indicator.js:1543
+#: indicator.js:1542
 msgid "Load Note from File"
 msgstr ""
 
-#: indicator.js:1609 indicator.js:1612
+#: indicator.js:1608 indicator.js:1611
 msgid "Saved!"
 msgstr ""
 
-#: indicator.js:1620
+#: indicator.js:1619
 #, javascript-format
 msgid "Saved to “%s”"
 msgstr ""
 
-#: indicator.js:1624
+#: indicator.js:1623
 #, javascript-format
 msgid "Failed to save file: %s"
 msgstr ""
 
-#: indicator.js:1667 indicator.js:1670
+#: indicator.js:1666 indicator.js:1669
 msgid "Exported!"
 msgstr ""
 
-#: indicator.js:1678
+#: indicator.js:1677
 #, javascript-format
 msgid "Exported to “%s”"
 msgstr ""
 
-#: indicator.js:1681
+#: indicator.js:1680
 #, javascript-format
 msgid "Failed to export file: %s"
 msgstr ""
 
-#: indicator.js:1707
+#: indicator.js:1706
 msgid "Export Note to File"
 msgstr ""
 

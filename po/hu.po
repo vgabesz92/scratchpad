@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: scratchpad 1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-28 11:11+0200\n"
+"POT-Creation-Date: 2026-09-28 17:45+0200\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -15,9 +15,9 @@ msgstr ""
 msgid "Today, %s:%s"
 msgstr "Ma, %s:%s"
 
-#: indicator.js:130 indicator.js:1481 indicator.js:1486 indicator.js:1501
-#: indicator.js:1505 indicator.js:1620 indicator.js:1624 indicator.js:1678
-#: indicator.js:1681 prefs.js:264
+#: indicator.js:130 indicator.js:1480 indicator.js:1485 indicator.js:1500
+#: indicator.js:1504 indicator.js:1619 indicator.js:1623 indicator.js:1677
+#: indicator.js:1680 prefs.js:264
 msgid "Scratchpad"
 msgstr "Jegyzetfüzet"
 
@@ -57,16 +57,16 @@ msgstr "Visszavonás"
 msgid "Jot down a quick thought, command, or snippet…"
 msgstr "Írj le egy gyors gondolatot, parancsot vagy kódrészletet…"
 
-#: indicator.js:425 indicator.js:437 indicator.js:520 indicator.js:1614
+#: indicator.js:425 indicator.js:437 indicator.js:520 indicator.js:1613
 msgid "Save to file"
 msgstr "Mentés fájlba"
 
-#: indicator.js:426 indicator.js:454 indicator.js:521 indicator.js:1276
-#: indicator.js:1331
+#: indicator.js:426 indicator.js:454 indicator.js:521 indicator.js:1275
+#: indicator.js:1330
 msgid "History"
 msgstr "Előzmények"
 
-#: indicator.js:427 indicator.js:464 indicator.js:522 indicator.js:1672
+#: indicator.js:427 indicator.js:464 indicator.js:522 indicator.js:1671
 msgid "Export…"
 msgstr "Exportálás…"
 
@@ -78,17 +78,17 @@ msgstr "Összes másolása"
 msgid "Clear"
 msgstr "Törlés"
 
-#: indicator.js:620 indicator.js:1141 indicator.js:1152 indicator.js:1633
+#: indicator.js:620 indicator.js:1141 indicator.js:1152 indicator.js:1632
 #: prefs.js:92
 msgid "Notes"
 msgstr "Jegyzetek"
 
-#: indicator.js:620 indicator.js:1141 indicator.js:1152 indicator.js:1633
+#: indicator.js:620 indicator.js:1141 indicator.js:1152 indicator.js:1632
 #: prefs.js:92
 msgid "Snippets"
 msgstr "Kódok"
 
-#: indicator.js:620 indicator.js:1141 indicator.js:1152 indicator.js:1633
+#: indicator.js:620 indicator.js:1141 indicator.js:1152 indicator.js:1632
 #: prefs.js:92
 msgid "Scratch"
 msgstr "Firka"
@@ -128,94 +128,94 @@ msgstr "A mentés sikertelen"
 msgid "Copied!"
 msgstr "Másolva!"
 
-#: indicator.js:1275 indicator.js:1330
+#: indicator.js:1274 indicator.js:1329
 #, javascript-format
 msgid "History (%d)"
 msgstr "Előzmények (%d)"
 
-#: indicator.js:1341
+#: indicator.js:1340
 msgid "Close"
 msgstr "Bezárás"
 
-#: indicator.js:1411
+#: indicator.js:1410
 msgid "Delete file"
 msgstr "Fájl törlése"
 
-#: indicator.js:1425
+#: indicator.js:1424
 msgid "No saved files yet"
 msgstr "Még nincsenek mentett fájlok"
 
-#: indicator.js:1449
+#: indicator.js:1448
 msgid "Browse other files…"
 msgstr "Más fájl tallózása…"
 
-#: indicator.js:1481
+#: indicator.js:1480
 #, javascript-format
 msgid "Loaded “%s”"
 msgstr "„%s” betöltve"
 
-#: indicator.js:1486
+#: indicator.js:1485
 #, javascript-format
 msgid "Failed to load file: %s"
 msgstr "A fájl betöltése sikertelen: %s"
 
-#: indicator.js:1501
+#: indicator.js:1500
 #, javascript-format
 msgid "“%s” deleted"
 msgstr "„%s” törölve"
 
-#: indicator.js:1505
+#: indicator.js:1504
 #, javascript-format
 msgid "Failed to delete file: %s"
 msgstr "A fájl törlése sikertelen: %s"
 
-#: indicator.js:1526 indicator.js:1690
+#: indicator.js:1525 indicator.js:1689
 #, fuzzy
 msgid "Markdown files (*.md)"
 msgstr "Markdown fájlok"
 
-#: indicator.js:1527 indicator.js:1691
+#: indicator.js:1526 indicator.js:1690
 #, fuzzy
 msgid "Text files (*.txt)"
 msgstr "Szövegfájlok"
 
-#: indicator.js:1528 indicator.js:1692
+#: indicator.js:1527 indicator.js:1691
 msgid "All files"
 msgstr "Minden fájl"
 
-#: indicator.js:1543
+#: indicator.js:1542
 msgid "Load Note from File"
 msgstr "Jegyzet betöltése fájlból"
 
-#: indicator.js:1609 indicator.js:1612
+#: indicator.js:1608 indicator.js:1611
 msgid "Saved!"
 msgstr "Elmentve!"
 
-#: indicator.js:1620
+#: indicator.js:1619
 #, javascript-format
 msgid "Saved to “%s”"
 msgstr "Elmentve ide: „%s”"
 
-#: indicator.js:1624
+#: indicator.js:1623
 #, javascript-format
 msgid "Failed to save file: %s"
 msgstr "A fájl mentése sikertelen: %s"
 
-#: indicator.js:1667 indicator.js:1670
+#: indicator.js:1666 indicator.js:1669
 msgid "Exported!"
 msgstr "Exportálva!"
 
-#: indicator.js:1678
+#: indicator.js:1677
 #, javascript-format
 msgid "Exported to “%s”"
 msgstr "Exportálva ide: „%s”"
 
-#: indicator.js:1681
+#: indicator.js:1680
 #, javascript-format
 msgid "Failed to export file: %s"
 msgstr "A fájl exportálása sikertelen: %s"
 
-#: indicator.js:1707
+#: indicator.js:1706
 msgid "Export Note to File"
 msgstr "Jegyzet exportálása fájlba"
 

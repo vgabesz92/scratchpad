@@ -10,7 +10,7 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
-UUID="scratchpad@hasmolam.github.io"
+UUID="scratchpad@vgabesz92.github.io"
 ZIP="dist/${UUID}.shell-extension.zip"
 
 pack() {

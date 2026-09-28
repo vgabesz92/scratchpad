@@ -1,10 +1,10 @@
 {
-  "uuid": "scratchpad@hasmolam.github.io",
+  "uuid": "scratchpad@vgabesz92.github.io",
   "name": "Scratchpad",
   "description": "Minimalist quick notes in the top bar: three plain-Markdown pads (Notes, Snippets, Scratch) with debounced atomic auto-save, live external sync, one-click copy and undoable clear.",
   "shell-version": ["50", "51"],
   "url": "https://github.com/vgabesz92/scratchpad",
   "settings-schema": "org.gnome.shell.extensions.scratchpad",
-  "gettext-domain": "scratchpad@hasmolam.github.io",
+  "gettext-domain": "scratchpad@vgabesz92.github.io",
   "version-name": "1.0.0"
 }

@@ -49,7 +49,7 @@ Támogatott GNOME Shell verzió: **50**, **51**.
 ```sh
 ./build.sh install
 # Wayland esetén jelentkezz ki, majd be, ezt követően:
-gnome-extensions enable scratchpad@hasmolam.github.io
+gnome-extensions enable scratchpad@vgabesz92.github.io
 ```
 
 ### Arch Linux (rendszerszintű csomag / Pacman)
@@ -151,7 +151,7 @@ Supports GNOME Shell **50** and **51**.
 ```sh
 ./build.sh install
 # Wayland: log out and back in, then
-gnome-extensions enable scratchpad@hasmolam.github.io
+gnome-extensions enable scratchpad@vgabesz92.github.io
 ```
 
 ### Arch Linux (system-wide / Pacman)

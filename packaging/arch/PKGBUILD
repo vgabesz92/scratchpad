@@ -12,7 +12,7 @@ depends=('gnome-shell>=1:50')
 makedepends=('glib2' 'gettext')
 install="${pkgname}.install"
 
-_uuid="scratchpad@hasmolam.github.io"
+_uuid="scratchpad@vgabesz92.github.io"
 _src="${startdir}/../.."
 
 package() {
