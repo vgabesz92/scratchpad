@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="scratchpad@hasmolam.github.io">
+  <schema id="org.gnome.shell.extensions.scratchpad"
+          path="/org/gnome/shell/extensions/scratchpad/">
+
+    <key name="active-tab" type="i">
+      <range min="0" max="2"/>
+      <default>0</default>
+      <summary>Active pad</summary>
+      <description>Index of the pad shown when the popup opens (0-2).</description>
+    </key>
+
+    <key name="tab-names" type="as">
+      <default>['', '', '']</default>
+      <summary>Custom pad names</summary>
+      <description>Three names; an empty string uses the localized default (Notes, Snippets, Scratch).</description>
+    </key>
+
+    <key name="wrap-lines" type="b">
+      <default>true</default>
+      <summary>Word wrap</summary>
+    </key>
+
+    <key name="syntax-highlighting" type="b">
+      <default>true</default>
+      <summary>Syntax highlighting</summary>
+      <description>Enable syntax highlighting for code blocks and snippets.</description>
+    </key>
+
+    <key name="monospace" type="b">
+      <default>false</default>
+      <summary>Use a monospace font in the editor (deprecated)</summary>
+    </key>
+
+    <key name="font-size" type="i">
+      <range min="10" max="24"/>
+      <default>14</default>
+      <summary>Editor font size in points</summary>
+    </key>
+
+    <key name="popup-width" type="i">
+      <range min="300" max="1200"/>
+      <default>380</default>
+      <summary>Popup width in pixels</summary>
+    </key>
+
+    <key name="popup-height" type="i">
+      <range min="300" max="1000"/>
+      <default>440</default>
+      <summary>Popup height in pixels</summary>
+    </key>
+
+    <key name="panel-position" type="s">
+      <choices>
+        <choice value="left"/>
+        <choice value="center"/>
+        <choice value="right"/>
+      </choices>
+      <default>'right'</default>
+      <summary>Where the indicator sits in the top bar</summary>
+    </key>
+
+    <key name="toggle-shortcut" type="as">
+      <default><![CDATA[['<Super><Alt>n']]]></default>
+      <summary>Keyboard shortcut that opens/closes the popup</summary>
+    </key>
+
+    <key name="data-directory" type="s">
+      <default>''</default>
+      <summary>Notes directory</summary>
+      <description>Empty means $XDG_DATA_HOME/gnome-scratchpad.</description>
+    </key>
+  </schema>
+</schemalist>

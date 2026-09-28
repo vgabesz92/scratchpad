@@ -1,0 +1,635 @@
+/* SPDX-License-Identifier: GPL-3.0-only
+ *
+ * GNOME / GTK4 (Libadwaita) native styling for Scratchpad.
+ * Designed to seamlessly blend with GNOME Shell (Adwaita dark & light).
+ * Accents follow the system accent colour (-st-accent-color).
+ */
+
+.scratchpad-menu,
+.scratchpad-container,
+.scratchpad-root {
+  color: #ffffff;
+}
+
+.scratchpad-root {
+  spacing: 8px;
+  padding: 4px 6px;
+}
+
+.scratchpad-root StLabel,
+.scratchpad-root StButton,
+.scratchpad-root StEntry {
+  color: #ffffff;
+}
+
+/* ---- header / segmented tabs (AdwTabBar / AdwViewSwitcher / .linked) ---- */
+
+.scratchpad-header {
+  spacing: 6px;
+  color: #ffffff;
+}
+
+/* GTK4 segmented button container (like AdwTabBar / AdwViewSwitcher / .linked) */
+.scratchpad-tabs {
+  spacing: 2px;
+  padding: 3px;
+  border-radius: 10px;
+  background-color: rgba(127, 127, 127, 0.12);
+  border: 1px solid rgba(127, 127, 127, 0.08);
+  color: #ffffff;
+}
+
+/* Individual tab inside segmented button */
+.scratchpad-tab {
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.9em;
+  font-weight: 600;
+  transition-duration: 200ms;
+  background-color: transparent;
+  color: #ffffff;
+}
+.scratchpad-tab:hover {
+  background-color: rgba(127, 127, 127, 0.16);
+  color: #ffffff;
+}
+.scratchpad-tab:focus {
+  box-shadow: inset 0 0 0 2px -st-accent-color;
+  color: #ffffff;
+}
+.scratchpad-tab:checked {
+  background-color: -st-accent-color;
+  color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* GTK4 flat icon button */
+.scratchpad-icon-button {
+  padding: 6px 8px;
+  border-radius: 8px;
+  transition-duration: 200ms;
+  background-color: transparent;
+  color: #ffffff;
+}
+.scratchpad-icon-button:hover {
+  background-color: rgba(127, 127, 127, 0.16);
+  color: #ffffff;
+}
+.scratchpad-icon-button:active,
+.scratchpad-icon-button:checked {
+  background-color: rgba(127, 127, 127, 0.26);
+  color: #ffffff;
+}
+.scratchpad-icon-button:focus {
+  box-shadow: inset 0 0 0 2px -st-accent-color;
+  color: #ffffff;
+}
+
+/* GTK4 Libadwaita destructive action (GNOME Red 3: #e01b24) */
+.scratchpad-destructive {
+  color: #e01b24;
+}
+.scratchpad-destructive:hover {
+  color: #e01b24;
+  background-color: rgba(224, 27, 36, 0.16);
+}
+.scratchpad-destructive:active {
+  color: #ffffff;
+  background-color: #e01b24;
+}
+
+/* ---- settings drawer (GTK4 / Libadwaita card / AdwPreferencesGroup style) ---- */
+
+.scratchpad-drawer {
+  spacing: 2px;
+  padding: 6px;
+  border-radius: 12px;
+  background-color: rgba(127, 127, 127, 0.08);
+  border: 1px solid rgba(127, 127, 127, 0.12);
+  color: #ffffff;
+}
+.scratchpad-drawer StLabel {
+  color: #ffffff;
+}
+.scratchpad-drawer-row {
+  spacing: 6px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  transition-duration: 200ms;
+  color: #ffffff;
+}
+.scratchpad-drawer-button {
+  background-color: transparent;
+  color: #ffffff;
+}
+.scratchpad-drawer-button:hover {
+  background-color: rgba(127, 127, 127, 0.14);
+  color: #ffffff;
+}
+.scratchpad-drawer-button:focus {
+  box-shadow: inset 0 0 0 2px -st-accent-color;
+  color: #ffffff;
+}
+
+.scratchpad-row-arrow {
+  opacity: 0.7;
+  color: #ffffff;
+}
+
+.scratchpad-link {
+  padding: 6px 10px;
+  border-radius: 8px;
+  color: -st-accent-color;
+  font-size: 0.9em;
+  font-weight: 500;
+  transition-duration: 200ms;
+}
+.scratchpad-link:hover {
+  background-color: rgba(127, 127, 127, 0.14);
+}
+.scratchpad-link:focus {
+  box-shadow: inset 0 0 0 2px -st-accent-color;
+}
+
+/* ---- undo banner (GTK4 / Libadwaita AdwBanner style) ---- */
+
+.scratchpad-banner {
+  spacing: 8px;
+  padding: 6px 8px 6px 12px;
+  border-radius: 10px;
+  background-color: rgba(127, 127, 127, 0.12);
+  border: 1px solid rgba(127, 127, 127, 0.12);
+  color: #ffffff;
+}
+.scratchpad-banner StLabel {
+  color: #ffffff;
+}
+
+/* ---- history dropdown menu (GNOME Shell popover / card style) ---- */
+
+.scratchpad-pill.scratchpad-pill-active {
+  background-color: -st-accent-color;
+  color: #ffffff;
+}
+
+.scratchpad-pill-arrow {
+  opacity: 0.7;
+  color: #ffffff;
+}
+.scratchpad-pill.scratchpad-pill-active .scratchpad-pill-arrow {
+  opacity: 1.0;
+  color: #ffffff;
+}
+
+.scratchpad-history-dropdown-wrapper {
+  margin: 4px 6px 6px 6px;
+  color: #ffffff;
+}
+
+.scratchpad-history-dropdown {
+  spacing: 4px;
+  padding: 8px 10px;
+  border-radius: 14px;
+  background-color: rgba(127, 127, 127, 0.14);
+  border: 1px solid rgba(127, 127, 127, 0.18);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.30);
+  min-width: 280px;
+  max-width: 440px;
+  color: #ffffff;
+}
+.scratchpad-history-dropdown StLabel {
+  color: #ffffff;
+}
+
+.scratchpad-history-header {
+  spacing: 6px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(127, 127, 127, 0.12);
+  color: #ffffff;
+}
+
+.scratchpad-history-header-icon {
+  opacity: 0.75;
+  color: #ffffff;
+}
+
+.scratchpad-history-title {
+  font-size: 0.9em;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.scratchpad-history-scroll {
+  max-height: 180px;
+  color: #ffffff;
+}
+
+.scratchpad-history-list {
+  spacing: 2px;
+  padding: 4px 0;
+  color: #ffffff;
+}
+
+.scratchpad-history-row {
+  spacing: 4px;
+  border-radius: 8px;
+  transition-duration: 150ms;
+  color: #ffffff;
+}
+.scratchpad-history-row:hover {
+  background-color: rgba(127, 127, 127, 0.12);
+}
+.scratchpad-history-row.scratchpad-recent-active {
+  background-color: rgba(127, 127, 127, 0.20);
+}
+
+.scratchpad-history-row-button {
+  padding: 6px 8px;
+  border-radius: 8px;
+  transition-duration: 150ms;
+  background-color: transparent;
+  color: #ffffff;
+}
+.scratchpad-history-row-button:focus {
+  box-shadow: inset 0 0 0 2px -st-accent-color;
+  color: #ffffff;
+}
+
+.scratchpad-history-row-content {
+  spacing: 8px;
+  color: #ffffff;
+}
+
+.scratchpad-history-row-name {
+  font-size: 0.9em;
+  font-weight: 500;
+  max-width: 200px;
+  color: #ffffff;
+}
+.scratchpad-history-row.scratchpad-recent-active .scratchpad-history-row-name {
+  color: -st-accent-color;
+  font-weight: 600;
+}
+
+.scratchpad-history-row-date {
+  font-size: 0.8em;
+  opacity: 0.7;
+  margin-left: 4px;
+  color: #ffffff;
+}
+
+.scratchpad-history-delete-button {
+  padding: 4px 6px;
+  border-radius: 6px;
+  opacity: 0.6;
+  transition-duration: 150ms;
+  margin-right: 2px;
+  background-color: transparent;
+  color: #ffffff;
+}
+.scratchpad-history-delete-button:hover {
+  opacity: 1.0;
+  background-color: rgba(224, 27, 36, 0.20);
+  color: #e01b24;
+}
+
+.scratchpad-history-empty {
+  font-size: 0.85em;
+  opacity: 0.7;
+  padding: 12px 6px;
+  color: #ffffff;
+}
+
+.scratchpad-history-separator {
+  height: 1px;
+  background-color: rgba(127, 127, 127, 0.12);
+  margin: 3px 0;
+}
+
+.scratchpad-history-browse-button {
+  padding: 6px 8px;
+  border-radius: 8px;
+  transition-duration: 150ms;
+  background-color: transparent;
+  color: #ffffff;
+}
+.scratchpad-history-browse-button:hover {
+  background-color: rgba(127, 127, 127, 0.12);
+}
+.scratchpad-history-browse-button:focus {
+  box-shadow: inset 0 0 0 2px -st-accent-color;
+}
+
+.scratchpad-history-browse-content {
+  spacing: 8px;
+  color: #ffffff;
+}
+
+.scratchpad-history-browse-label {
+  font-size: 0.9em;
+  font-weight: 500;
+  color: -st-accent-color;
+}
+
+/* ---- editor (GTK4 / Libadwaita textview / card style) ---- */
+
+.scratchpad-scroll {
+  border-radius: 12px;
+  background-color: rgba(127, 127, 127, 0.08);
+  border: 1px solid rgba(127, 127, 127, 0.14);
+  transition-duration: 200ms;
+  color: #ffffff;
+}
+.scratchpad-scroll:focus {
+  border-color: -st-accent-color;
+  box-shadow: inset 0 0 0 1px -st-accent-color;
+}
+
+StEntry.scratchpad-editor,
+StEntry.scratchpad-editor:hover,
+StEntry.scratchpad-editor:focus {
+  background-color: transparent;
+  border: none;
+  box-shadow: none;
+  border-radius: 12px;
+  padding: 10px 12px;
+  color: #ffffff;
+  caret-color: -st-accent-color;
+  selection-background-color: -st-accent-color;
+  selected-color: #ffffff;
+}
+
+StEntry.scratchpad-editor StLabel.hint-text {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* ---- footer ---- */
+
+.scratchpad-footer {
+  spacing: 8px;
+  padding-top: 4px;
+  color: #ffffff;
+}
+
+.scratchpad-footer StLabel {
+  color: #ffffff;
+}
+
+.scratchpad-footer-info {
+  spacing: 4px;
+  color: #ffffff;
+}
+
+.scratchpad-counter-sep {
+  font-size: 0.85em;
+  opacity: 0.5;
+  color: #ffffff;
+}
+
+.scratchpad-footer-actions {
+  spacing: 6px;
+  color: #ffffff;
+}
+
+/* GNOME secondary / dim text */
+.scratchpad-counter,
+.scratchpad-status {
+  font-size: 0.85em;
+  opacity: 0.8;
+  color: #ffffff;
+}
+.scratchpad-status.scratchpad-error {
+  color: #e01b24;
+  opacity: 1.0;
+  font-weight: 600;
+}
+.scratchpad-status.scratchpad-hint {
+  opacity: 1.0;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+/* ---- grouped buttons (Libadwaita / GTK4 .linked style) ---- */
+
+.scratchpad-button-group {
+  spacing: 1px;
+  padding: 2px;
+  border-radius: 8px;
+  background-color: rgba(127, 127, 127, 0.12);
+  border: 1px solid rgba(127, 127, 127, 0.08);
+  color: #ffffff;
+}
+
+.scratchpad-group-button {
+  padding: 5px 8px;
+  border-radius: 6px;
+  transition-duration: 150ms;
+  background-color: transparent;
+  color: #ffffff;
+}
+.scratchpad-group-button StIcon {
+  color: #ffffff;
+}
+.scratchpad-group-button StLabel {
+  color: #ffffff;
+}
+.scratchpad-group-button:hover {
+  background-color: rgba(127, 127, 127, 0.20);
+  color: #ffffff;
+}
+.scratchpad-group-button:active,
+.scratchpad-group-button:checked,
+.scratchpad-group-button.scratchpad-pill-active {
+  background-color: -st-accent-color;
+  color: #ffffff;
+}
+.scratchpad-group-button:focus {
+  box-shadow: inset 0 0 0 2px -st-accent-color;
+  color: #ffffff;
+}
+.scratchpad-group-button.scratchpad-success {
+  background-color: #2ec27e;
+  color: #ffffff;
+}
+.scratchpad-group-button.scratchpad-destructive {
+  color: #e01b24;
+}
+.scratchpad-group-button.scratchpad-destructive StIcon {
+  color: #e01b24;
+}
+.scratchpad-group-button.scratchpad-destructive:hover {
+  color: #e01b24;
+  background-color: rgba(224, 27, 36, 0.20);
+}
+.scratchpad-group-button.scratchpad-destructive:active {
+  color: #ffffff;
+  background-color: #e01b24;
+}
+.scratchpad-group-button.scratchpad-destructive:active StIcon {
+  color: #ffffff;
+}
+
+.scratchpad-btn-content {
+  spacing: 3px;
+  color: #ffffff;
+}
+
+/* GTK4 button style */
+.scratchpad-pill {
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.9em;
+  font-weight: 600;
+  transition-duration: 200ms;
+  color: #ffffff;
+}
+.scratchpad-pill StLabel {
+  color: #ffffff;
+}
+.scratchpad-pill:hover {
+  background-color: rgba(127, 127, 127, 0.22);
+  color: #ffffff;
+}
+.scratchpad-pill:active {
+  background-color: rgba(127, 127, 127, 0.30);
+  color: #ffffff;
+}
+.scratchpad-pill:focus {
+  box-shadow: inset 0 0 0 2px -st-accent-color;
+  color: #ffffff;
+}
+.scratchpad-pill-content {
+  spacing: 6px;
+  color: #ffffff;
+}
+
+/* GTK4 suggested action / accent */
+.scratchpad-pill.button.default,
+.scratchpad-accent {
+  background-color: -st-accent-color;
+  color: #ffffff;
+}
+
+/* GNOME Success action (GNOME Green: #2ec27e) */
+.scratchpad-pill.scratchpad-success {
+  background-color: #2ec27e;
+  color: #ffffff;
+}
+
+/* ---- resizable width/height container & handles ---- */
+
+.scratchpad-container {
+  spacing: 0;
+}
+
+.scratchpad-middle-box {
+  spacing: 0;
+}
+
+.scratchpad-bottom-box {
+  spacing: 0;
+  height: 10px;
+}
+
+.scratchpad-resize-handle {
+  transition-duration: 150ms;
+}
+
+.scratchpad-resize-handle-left,
+.scratchpad-resize-handle-right {
+  width: 8px;
+  padding: 0;
+  background-color: transparent;
+}
+
+.scratchpad-resize-handle-left:hover,
+.scratchpad-resize-handle-left:active,
+.scratchpad-resize-handle-right:hover,
+.scratchpad-resize-handle-right:active {
+  background-color: transparent;
+}
+
+.scratchpad-resize-handle-bottom {
+  height: 10px;
+  padding: 1px 0;
+}
+
+.scratchpad-resize-handle-corner-se,
+.scratchpad-resize-handle-corner-sw {
+  width: 16px;
+  height: 10px;
+  padding: 1px;
+}
+
+.scratchpad-resize-handle-bottom:hover,
+.scratchpad-resize-handle-bottom:active,
+.scratchpad-resize-handle-corner-se:hover,
+.scratchpad-resize-handle-corner-se:active,
+.scratchpad-resize-handle-corner-sw:hover,
+.scratchpad-resize-handle-corner-sw:active {
+  background-color: rgba(127, 127, 127, 0.10);
+}
+
+.scratchpad-resize-grip-h {
+  width: 36px;
+  height: 4px;
+  border-radius: 2px;
+  background-color: rgba(127, 127, 127, 0.25);
+  transition-duration: 150ms;
+}
+
+.scratchpad-resize-grip-corner-se {
+  width: 7px;
+  height: 7px;
+  border-right: 2px solid rgba(127, 127, 127, 0.35);
+  border-bottom: 2px solid rgba(127, 127, 127, 0.35);
+  border-radius: 0 0 2px 0;
+  margin-right: 3px;
+  margin-bottom: 2px;
+  transition-duration: 150ms;
+}
+
+.scratchpad-resize-grip-corner-sw {
+  width: 7px;
+  height: 7px;
+  border-left: 2px solid rgba(127, 127, 127, 0.35);
+  border-bottom: 2px solid rgba(127, 127, 127, 0.35);
+  border-radius: 0 0 0 2px;
+  margin-left: 3px;
+  margin-bottom: 2px;
+  transition-duration: 150ms;
+}
+
+.scratchpad-resize-handle:hover .scratchpad-resize-grip-h,
+.scratchpad-resize-handle:active .scratchpad-resize-grip-h {
+  background-color: -st-accent-color;
+  box-shadow: 0 0 4px -st-accent-color;
+}
+
+.scratchpad-resize-handle:hover .scratchpad-resize-grip-corner-se,
+.scratchpad-resize-handle:active .scratchpad-resize-grip-corner-se,
+.scratchpad-resize-handle:hover .scratchpad-resize-grip-corner-sw,
+.scratchpad-resize-handle:active .scratchpad-resize-grip-corner-sw {
+  border-color: -st-accent-color;
+}
+
+/* GNOME 51 reduced motion */
+.scratchpad-reduced-motion .scratchpad-tab,
+.scratchpad-reduced-motion .scratchpad-icon-button,
+.scratchpad-reduced-motion .scratchpad-button-group,
+.scratchpad-reduced-motion .scratchpad-group-button,
+.scratchpad-reduced-motion .scratchpad-scroll,
+.scratchpad-reduced-motion .scratchpad-pill,
+.scratchpad-reduced-motion .scratchpad-drawer-row,
+.scratchpad-reduced-motion .scratchpad-drawer-button,
+.scratchpad-reduced-motion .scratchpad-link,
+.scratchpad-reduced-motion .scratchpad-resize-handle,
+.scratchpad-reduced-motion .scratchpad-resize-grip-h,
+.scratchpad-reduced-motion .scratchpad-resize-grip-corner-se,
+.scratchpad-reduced-motion .scratchpad-resize-grip-corner-sw,
+.scratchpad-reduced-motion .scratchpad-history-row,
+.scratchpad-reduced-motion .scratchpad-history-row-button,
+.scratchpad-reduced-motion .scratchpad-history-delete-button,
+.scratchpad-reduced-motion .scratchpad-history-browse-button {
+  transition-duration: 0ms;
+}

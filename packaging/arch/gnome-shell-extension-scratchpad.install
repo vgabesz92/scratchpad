@@ -1,0 +1,9 @@
+post_install() {
+    echo ":: To enable Scratchpad, run:"
+    echo "     gnome-extensions enable scratchpad@hasmolam.github.io"
+    echo ":: (On Wayland, you may need to log out and back in first)"
+}
+
+post_upgrade() {
+    echo ":: Restart GNOME Shell (or log out and back in) to apply updates."
+}

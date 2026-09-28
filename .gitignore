@@ -1,0 +1,11 @@
+# Build & distribution artifacts
+/dist/
+*.zip
+*.tar.*
+*.pkg.tar.zst
+*.mo
+/schemas/gschemas.compiled
+
+# Arch packaging build dirs
+/packaging/arch/pkg/
+/packaging/arch/src/

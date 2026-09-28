@@ -1,0 +1,38 @@
+# Maintainer: Gabesz
+# Builds from the local checkout:  cd packaging/arch && makepkg -si
+
+pkgname=gnome-shell-extension-scratchpad
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="Minimalist quick-notes scratchpad in the GNOME top bar"
+arch=('any')
+url="https://github.com/vgabesz92/scratchpad"
+license=('GPL-3.0-only')
+depends=('gnome-shell>=1:50')
+makedepends=('glib2' 'gettext')
+install="${pkgname}.install"
+
+_uuid="scratchpad@hasmolam.github.io"
+_src="${startdir}/../.."
+
+package() {
+    local dest="${pkgdir}/usr/share/gnome-shell/extensions/${_uuid}"
+
+    install -Dm644 -t "${dest}" \
+        "${_src}"/{extension.js,indicator.js,storage.js,prefs.js,syntax.js,metadata.json,stylesheet.css}
+    install -Dm644 -t "${dest}/languages" "${_src}"/languages/*.js
+    install -Dm644 -t "${dest}/icons" "${_src}"/icons/*.svg
+
+    install -Dm644 -t "${dest}/schemas" "${_src}"/schemas/*.gschema.xml
+    install -Dm644 -t "${pkgdir}/usr/share/glib-2.0/schemas" "${_src}"/schemas/*.gschema.xml
+    glib-compile-schemas "${dest}/schemas"
+
+    local po lang
+    for po in "${_src}"/po/*.po; do
+        lang="$(basename "${po}" .po)"
+        install -d "${dest}/locale/${lang}/LC_MESSAGES"
+        msgfmt -o "${dest}/locale/${lang}/LC_MESSAGES/${_uuid}.mo" "${po}"
+    done
+
+    install -Dm644 "${_src}/LICENSE" "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
+}
