@@ -14,7 +14,7 @@ UUID="scratchpad@gavnir"
 ZIP="dist/${UUID}.shell-extension.zip"
 
 pack() {
-    mkdir -p dist
+    mkdir -p dist packages
     gnome-extensions pack --force \
         --podir=po \
         --schema=schemas/org.gnome.shell.extensions.scratchpad.gschema.xml \
@@ -25,7 +25,8 @@ pack() {
         --extra-source=icons \
         --extra-source=LICENSE \
         --out-dir=dist .
-    echo "Built ${ZIP}"
+    cp -f "${ZIP}" packages/
+    echo "Built ${ZIP} (and copied to packages/)"
 }
 
 case "${1:-pack}" in
@@ -49,10 +50,11 @@ case "${1:-pack}" in
             extension.js indicator.js prefs.js storage.js syntax.js
         for po in po/*.po; do msgmerge --update --backup=none "$po" "po/${UUID}.pot"; done ;;
     pacman)
-        mkdir -p dist
+        mkdir -p dist packages
         (cd packaging/arch && makepkg -f)
         cp -f packaging/arch/*.pkg.tar.zst dist/
-        echo "Built package: dist/$(cd packaging/arch && ls *.pkg.tar.zst | head -n 1)"
+        cp -f packaging/arch/*.pkg.tar.zst packages/
+        echo "Built package in dist/ and packages/"
         ;;
     nested)
         # GNOME 49+ replaced --nested with the devkit viewer.

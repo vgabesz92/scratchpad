@@ -44,7 +44,13 @@ Támogatott GNOME Shell verzió: **50**, **51**.
 
 ## Telepítés
 
-### Felhasználói telepítés
+### Közvetlen letöltés (Előre csomagolt változatok)
+
+A [`packages/`](packages/) mappából közvetlenül letölthetők az előre összeállított csomagok:
+- **GNOME Shell kiterjesztés ZIP:** [`packages/scratchpad@gavnir.shell-extension.zip`](packages/scratchpad@gavnir.shell-extension.zip)
+- **Arch Linux Pacman csomag:** [`packages/gnome-shell-extension-scratchpad-1.0.0-1-any.pkg.tar.zst`](packages/gnome-shell-extension-scratchpad-1.0.0-1-any.pkg.tar.zst)
+
+### Felhasználói telepítés forrásból
 
 ```sh
 ./build.sh install
@@ -146,7 +152,13 @@ Supports GNOME Shell **50** and **51**.
 
 ## Installation
 
-### User install
+### Direct Download (Pre-built packages)
+
+Download ready-to-use packages directly from the [`packages/`](packages/) directory:
+- **GNOME Shell extension ZIP:** [`packages/scratchpad@gavnir.shell-extension.zip`](packages/scratchpad@gavnir.shell-extension.zip)
+- **Arch Linux Pacman package:** [`packages/gnome-shell-extension-scratchpad-1.0.0-1-any.pkg.tar.zst`](packages/gnome-shell-extension-scratchpad-1.0.0-1-any.pkg.tar.zst)
+
+### User install from source
 
 ```sh
 ./build.sh install

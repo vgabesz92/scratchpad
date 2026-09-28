@@ -1,11 +1,16 @@
 # Build & distribution artifacts
 /dist/
-*.zip
-*.tar.*
-*.pkg.tar.zst
 *.mo
 /schemas/gschemas.compiled
+
+# Archive files (allow pre-built packages in /packages/)
+/*.zip
+/*.tar.*
+/*.pkg.tar.zst
+!/packages/
+!/packages/*
 
 # Arch packaging build dirs
 /packaging/arch/pkg/
 /packaging/arch/src/
+/packaging/arch/*.pkg.tar.zst
