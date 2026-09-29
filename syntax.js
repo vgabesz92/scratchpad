@@ -30,14 +30,27 @@ const THEME_COLORS = {
     'diff-meta':       '#79c0ff', // Cyan: diff chunk headers
     'fence-marker':    '#6e7681', // Dim gray: ``` and ~~~ fence backticks
     'fence-lang':      '#58a6ff', // Vibrant cyan-blue (bold): language identifier
-    'markdown-header': '#79c0ff', // Sky blue (bold): markdown headers
-    'markdown-bold':   '#e6edf3', // Bright white (bold): bold text
-    'markdown-italic': '#e6edf3', // Bright white (italic): italic text
-    'markdown-quote':  '#8b949e', // Slate gray (italic): blockquotes
-    'markdown-link':   '#58a6ff', // Blue: links
-    'markdown-list':   '#ff7b72', // Coral red: list bullets/numbers
-    regex:             '#7ee787', // Green: regular expressions
-    variable:          '#ffa657', // Amber: special variables, self, cls
+    'markdown-header':        '#79c0ff', // Sky blue (bold): markdown headers
+    'markdown-header-prefix': '#6e7681', // Dim gray: # / ## prefix when editing
+    'markdown-bold':          '#e6edf3', // Bright white (bold): bold text
+    'markdown-italic':        '#e6edf3', // Bright white (italic): italic text
+    'markdown-quote':         '#8b949e', // Slate gray (italic): blockquotes
+    'markdown-link':          '#58a6ff', // Blue: links
+    'markdown-list':          '#ff7b72', // Coral red: list bullets/numbers
+    'markdown-hr':            '#6e7681', // Muted slate gray: horizontal rule divider line
+    'markdown-done':          '#8b949e', // Slate gray (strikethrough): completed task
+    'markdown-strikethrough': '#8b949e', // Slate gray (strikethrough): strikethrough text
+    regex:                    '#7ee787', // Green: regular expressions
+    variable:                 '#ffa657', // Amber: special variables, self, cls
+};
+
+const HEADER_SCALES = {
+    1: 1.35,
+    2: 1.22,
+    3: 1.14,
+    4: 1.07,
+    5: 1.02,
+    6: 1.0,
 };
 
 function hexToPangoRgb(hex) {
@@ -560,11 +573,11 @@ export function getCodeSnippetRanges(text) {
  * @param {boolean} [enableSyntax=true] Whether syntax color highlighting is enabled
  * @returns {Pango.AttrList|null}
  */
-export function createSyntaxAttributes(text, isSnippetsPad, enableSyntax = true) {
+export function createSyntaxAttributes(text, isSnippetsPad, enableSyntax = true, enableMarkdown = true, cursorPos = -1) {
     if (!text)
         return null;
 
-    if (!enableSyntax && isSnippetsPad)
+    if (!enableSyntax && !enableMarkdown && isSnippetsPad)
         return null;
 
     const charToByte = buildCharToByteTable(text);
@@ -632,24 +645,30 @@ export function createSyntaxAttributes(text, isSnippetsPad, enableSyntax = true)
             if (b.closeStart !== -1 && b.closeEnd !== -1)
                 tokens.push({type: 'fence-marker', start: b.closeStart, end: b.closeEnd});
         }
-    } else if (isSnippetsPad) {
-        const lang = detectLanguage(text) || 'javascript';
-        tokenizeByLanguage(lang, text, 0, tokens);
-    } else {
-        // On Notes/Scratchpad without fences: check inline code and markdown
-        tokenizeByLanguage('markdown', text, 0, tokens);
-        const inlineRegex = /(`+)([\s\S]*?[^`])\1(?!`)/g;
-        while ((m = inlineRegex.exec(text)) !== null) {
-            if (m[0].includes('\n\n'))
-                continue;
-            tokens.push({type: 'inline-code', start: m.index, end: m.index + m[0].length});
-        }
-        if (tokens.length === 0)
-            return null;
     }
 
-    // On non-snippets pad, check inline code outside code blocks
-    if (!isSnippetsPad && blocks.length > 0) {
+    if (isSnippetsPad) {
+        if (enableSyntax) {
+            const lang = detectLanguage(text) || 'javascript';
+            tokenizeByLanguage(lang, text, 0, tokens);
+        }
+    } else {
+        // On non-snippets pad (Notes, Scratchpad): check Markdown styling
+        if (enableMarkdown) {
+            const mdTokens = [];
+            tokenizeByLanguage('markdown', text, 0, mdTokens);
+            if (blocks.length > 0) {
+                for (const t of mdTokens) {
+                    const overlaps = blocks.some(b => Math.max(t.start, b.start) < Math.min(t.end, b.end));
+                    if (!overlaps)
+                        tokens.push(t);
+                }
+            } else {
+                tokens.push(...mdTokens);
+            }
+        }
+
+        // Inline code outside code blocks
         const inlineRegex = /(`+)([\s\S]*?[^`])\1(?!`)/g;
         while ((m = inlineRegex.exec(text)) !== null) {
             if (m[0].includes('\n\n'))
@@ -662,7 +681,15 @@ export function createSyntaxAttributes(text, isSnippetsPad, enableSyntax = true)
         }
     }
 
+    if (!enableSyntax && !enableMarkdown) {
+        if (isSnippetsPad)
+            return null;
+        if (blocks.length === 0 && !text.includes('`'))
+            return null;
+    }
+
     const attrList = new Pango.AttrList();
+    let hasAttrs = false;
 
     // On non-snippets pad (Notes, Scratch), code blocks and inline code get monospace font
     if (!isSnippetsPad) {
@@ -671,6 +698,7 @@ export function createSyntaxAttributes(text, isSnippetsPad, enableSyntax = true)
             fontAttr.start_index = charToByte[Math.min(b.start, textLen)];
             fontAttr.end_index = charToByte[Math.min(b.end, textLen)];
             attrList.insert(fontAttr);
+            hasAttrs = true;
         }
         for (const t of tokens) {
             if (t.type === 'inline-code') {
@@ -678,42 +706,94 @@ export function createSyntaxAttributes(text, isSnippetsPad, enableSyntax = true)
                 fontAttr.start_index = charToByte[Math.min(t.start, textLen)];
                 fontAttr.end_index = charToByte[Math.min(t.end, textLen)];
                 attrList.insert(fontAttr);
+                hasAttrs = true;
             }
         }
     }
 
     // Apply syntax color, style (italic for comments), and weight (bold for fence language tags / headers)
-    if (enableSyntax) {
-        for (const token of tokens) {
-            if (token.type === 'inline-code')
-                continue;
+    for (const token of tokens) {
+        if (token.type === 'inline-code')
+            continue;
 
-            const startByte = charToByte[Math.min(token.start, textLen)];
-            const endByte = charToByte[Math.min(token.end, textLen)];
-            if (endByte <= startByte)
-                continue;
+        const isMarkdown = token.type.startsWith('markdown-');
+        if (isMarkdown && !enableMarkdown)
+            continue;
+        if (!isMarkdown && !enableSyntax)
+            continue;
 
-            const rgb = PANGO_COLORS[token.type];
-            if (rgb) {
-                const colorAttr = Pango.attr_foreground_new(rgb[0], rgb[1], rgb[2]);
-                colorAttr.start_index = startByte;
-                colorAttr.end_index = endByte;
-                attrList.insert(colorAttr);
-            }
+        const startByte = charToByte[Math.min(token.start, textLen)];
+        const endByte = charToByte[Math.min(token.end, textLen)];
+        if (endByte <= startByte)
+            continue;
 
-            if (token.type === 'comment' || token.type === 'markdown-quote' || token.type === 'markdown-italic') {
-                const italicAttr = Pango.attr_style_new(Pango.Style.ITALIC);
-                italicAttr.start_index = startByte;
-                italicAttr.end_index = endByte;
-                attrList.insert(italicAttr);
-            } else if (token.type === 'fence-lang' || token.type === 'markdown-header' || token.type === 'markdown-bold') {
+        // Heading prefix (# , ## ...): hide with scale 0 unless cursor is within the prefix
+        if (token.type === 'markdown-header-prefix') {
+            const inPrefix = cursorPos >= 0 && cursorPos >= token.start && cursorPos <= token.end;
+            if (!inPrefix) {
+                const scaleAttr = Pango.attr_scale_new(0.0);
+                scaleAttr.start_index = startByte;
+                scaleAttr.end_index = endByte;
+                attrList.insert(scaleAttr);
+                hasAttrs = true;
+            } else {
+                const rgb = PANGO_COLORS['markdown-header-prefix'];
+                if (rgb) {
+                    const colorAttr = Pango.attr_foreground_new(rgb[0], rgb[1], rgb[2]);
+                    colorAttr.start_index = startByte;
+                    colorAttr.end_index = endByte;
+                    attrList.insert(colorAttr);
+                    hasAttrs = true;
+                }
                 const boldAttr = Pango.attr_weight_new(Pango.Weight.BOLD);
                 boldAttr.start_index = startByte;
                 boldAttr.end_index = endByte;
                 attrList.insert(boldAttr);
+                hasAttrs = true;
             }
+            continue;
+        }
+
+        const rgb = PANGO_COLORS[token.type];
+        if (rgb) {
+            const colorAttr = Pango.attr_foreground_new(rgb[0], rgb[1], rgb[2]);
+            colorAttr.start_index = startByte;
+            colorAttr.end_index = endByte;
+            attrList.insert(colorAttr);
+            hasAttrs = true;
+        }
+
+        if (token.type === 'comment' || token.type === 'markdown-quote' || token.type === 'markdown-italic') {
+            const italicAttr = Pango.attr_style_new(Pango.Style.ITALIC);
+            italicAttr.start_index = startByte;
+            italicAttr.end_index = endByte;
+            attrList.insert(italicAttr);
+            hasAttrs = true;
+        } else if (token.type === 'fence-lang' || token.type === 'markdown-header' || token.type === 'markdown-bold') {
+            const boldAttr = Pango.attr_weight_new(Pango.Weight.BOLD);
+            boldAttr.start_index = startByte;
+            boldAttr.end_index = endByte;
+            attrList.insert(boldAttr);
+            hasAttrs = true;
+        }
+
+        if (token.type === 'markdown-header') {
+            const scale = HEADER_SCALES[token.level] || 1.2;
+            const scaleAttr = Pango.attr_scale_new(scale);
+            scaleAttr.start_index = startByte;
+            scaleAttr.end_index = endByte;
+            attrList.insert(scaleAttr);
+            hasAttrs = true;
+        }
+
+        if (token.type === 'markdown-done' || token.type === 'markdown-strikethrough') {
+            const strikeAttr = Pango.attr_strikethrough_new(true);
+            strikeAttr.start_index = startByte;
+            strikeAttr.end_index = endByte;
+            attrList.insert(strikeAttr);
+            hasAttrs = true;
         }
     }
 
-    return attrList;
+    return hasAttrs ? attrList : null;
 }

@@ -26,7 +26,7 @@ Gio._promisify(Gio.File.prototype, 'delete_async');
 const DEBOUNCE_MS = 400;
 const COPY_FEEDBACK_MS = 1500;
 const UNDO_BANNER_MS = 5000;
-const FONT_MIN = 10;
+const FONT_MIN = 6;
 const FONT_MAX = 24;
 const WIDTH_MIN = 300;
 const WIDTH_MAX = 1200;
@@ -152,6 +152,12 @@ class ScratchpadIndicator extends PanelMenu.Button {
         this._currentFile = new Array(TOTAL_PADS).fill(null);
         this._cachedFiles = new Array(TOTAL_PADS).fill(null);
         this._activeTab = clamp(settings.get_int('active-tab'), 0, TOTAL_PADS - 1);
+        const initialEnabled = this._getEnabledPads();
+        if (!initialEnabled[this._activeTab]) {
+            const first = initialEnabled.findIndex(Boolean);
+            if (first >= 0)
+                this._activeTab = first;
+        }
 
         this.add_child(new St.Icon({
             gicon: Gio.icon_new_for_string(
@@ -192,6 +198,7 @@ class ScratchpadIndicator extends PanelMenu.Button {
             y_expand: true,
         });
         this._container.add_child(middleBox);
+        this._container.add_child(this._historyDropdownWrapper);
         this._container.add_child(bottomBox);
         this.menu.box.add_child(this._container);
 
@@ -202,6 +209,7 @@ class ScratchpadIndicator extends PanelMenu.Button {
 
         this._bindSettings();
         this._applyTabNames();
+        this._applyEnabledPads();
         this._applyEditorSettings();
         this._applyPopupSize();
         this._applyReducedMotion();
@@ -261,6 +269,7 @@ class ScratchpadIndicator extends PanelMenu.Button {
         });
         this._wrapSwitch = this._addSwitchRow(_('Word wrap'), 'wrap-lines');
         this._syntaxSwitch = this._addSwitchRow(_('Syntax highlighting'), 'syntax-highlighting');
+        this._markdownSwitch = this._addSwitchRow(_('Markdown styling'), 'markdown-styling');
 
         const fontRow = new St.BoxLayout({style_class: 'scratchpad-drawer-row', x_expand: true, y_align: CENTER});
         this._fontLabel = new St.Label({x_expand: true, y_align: CENTER});
@@ -360,7 +369,15 @@ class ScratchpadIndicator extends PanelMenu.Button {
             color: new Color({red: 255, green: 255, blue: 255, alpha: 255}),
         });
         ct.connect('text-changed', () => this._onTextChanged());
-        ct.connect('cursor-changed', () => this._addIdle('scroll', () => this._ensureCursorVisible()));
+        ct.connect('cursor-changed', () => {
+            this._addIdle('scroll', () => this._ensureCursorVisible());
+            if (this._loaded && !this._destroyed) {
+                const isSnippets = this._isSnippetsPad(this._activeTab);
+                const markdown = this._markdownSwitch ? this._markdownSwitch.state : this._settings.get_boolean('markdown-styling');
+                if (!isSnippets && markdown)
+                    this._addIdle('format', () => this._updateFormatting());
+            }
+        });
         // GNOME 51: event signals are deprecated in favour of Clutter controllers.
         // ClutterText's own controller propagates Ctrl+… and control characters
         // (Tab), so these reach ours regardless of action order.
@@ -369,7 +386,6 @@ class ScratchpadIndicator extends PanelMenu.Button {
         ct.add_action(this._keyController);
         ct.connect('key-focus-in', () => {
             this._scroll.add_style_pseudo_class('focus');
-            this._closeHistoryMenu();
             this._updateFormatting();
         });
         ct.connect('key-focus-out', () => this._scroll.remove_style_pseudo_class('focus'));
@@ -391,7 +407,6 @@ class ScratchpadIndicator extends PanelMenu.Button {
             return global.stage.get_event_actor(event) === this._viewport;
         });
         clickGesture.connect('recognize', () => {
-            this._closeHistoryMenu();
             ct.grab_key_focus();
             ct.set_cursor_position(-1);
             ct.set_selection_bound(-1);
@@ -531,17 +546,17 @@ class ScratchpadIndicator extends PanelMenu.Button {
         footer.add_child(infoBox);
         footer.add_child(actionsBox);
 
-        // History dropdown menu container (positioned above footer)
+        // History panel container (positioned below GUI)
         this._historyDropdownWrapper = new St.BoxLayout({
             style_class: 'scratchpad-history-dropdown-wrapper',
             x_expand: true,
-            x_align: Clutter.ActorAlign.END,
             visible: false,
         });
 
         this._historyDropdown = new St.BoxLayout({
             style_class: 'scratchpad-history-dropdown',
             orientation: VERTICAL,
+            x_expand: true,
         });
         this._historyDropdownWrapper.add_child(this._historyDropdown);
 
@@ -549,7 +564,6 @@ class ScratchpadIndicator extends PanelMenu.Button {
         this._root.add_child(this._drawer);
         this._root.add_child(this._banner);
         this._root.add_child(this._scroll);
-        this._root.add_child(this._historyDropdownWrapper);
         this._root.add_child(footer);
     }
 
@@ -567,16 +581,23 @@ class ScratchpadIndicator extends PanelMenu.Button {
 
     _addSwitchRow(text, key) {
         const sw = new PopupMenu.Switch(this._settings.get_boolean(key));
-        const box = new St.BoxLayout({x_expand: true});
+        sw.reactive = false;
+        sw.can_focus = false;
+        const box = new St.BoxLayout({x_expand: true, reactive: false});
         box.add_child(new St.Label({text, x_expand: true, y_align: CENTER}));
         box.add_child(sw);
         const row = new St.Button({
-            style_class: 'scratchpad-drawer-row scratchpad-drawer-button',
+            style_class: 'scratchpad-drawer-row scratchpad-drawer-button button flat',
             can_focus: true,
             x_expand: true,
             child: box,
         });
-        row.connect('clicked', () => this._settings.set_boolean(key, !this._settings.get_boolean(key)));
+        row.connect('clicked', () => {
+            const next = !sw.state;
+            sw.state = next;
+            this._settings.set_boolean(key, next);
+            this._applyEditorSettings();
+        });
         this._drawer.add_child(row);
         return sw;
     }
@@ -587,14 +608,17 @@ class ScratchpadIndicator extends PanelMenu.Button {
         this._settings.connectObject(
             'changed::wrap-lines', () => this._applyEditorSettings(),
             'changed::syntax-highlighting', () => this._applyEditorSettings(),
+            'changed::markdown-styling', () => this._applyEditorSettings(),
             'changed::font-size', () => this._applyEditorSettings(),
             'changed::tab-names', () => this._applyTabNames(),
+            'changed::enabled-pads', () => this._applyEnabledPads(),
             'changed::popup-width', () => this._applyPopupSize(),
             'changed::popup-height', () => this._applyPopupSize(),
             'changed::data-directory', () => this._onDataDirChanged(),
             'changed::active-tab', () => {
                 const tab = clamp(this._settings.get_int('active-tab'), 0, TOTAL_PADS - 1);
-                if (tab !== this._activeTab)
+                const enabled = this._getEnabledPads();
+                if (enabled[tab] && tab !== this._activeTab)
                     this._selectTab(tab);
             },
             this);
@@ -603,6 +627,32 @@ class ScratchpadIndicator extends PanelMenu.Button {
         St.Settings.get().connectObject(
             'notify::reduced-motion', () => this._applyReducedMotion(),
             this);
+    }
+
+    _getEnabledPads() {
+        try {
+            if (this._settings.settings_schema?.has_key('enabled-pads')) {
+                const val = this._settings.get_value('enabled-pads');
+                const arr = val?.deep_unpack();
+                if (Array.isArray(arr) && arr.length >= TOTAL_PADS) {
+                    if (arr.some(Boolean))
+                        return arr.slice(0, TOTAL_PADS);
+                }
+            }
+        } catch (_) {}
+        return [true, true, true];
+    }
+
+    _applyEnabledPads() {
+        const enabled = this._getEnabledPads();
+        this._tabButtons.forEach((btn, i) => {
+            btn.visible = enabled[i];
+        });
+        if (!enabled[this._activeTab]) {
+            const next = enabled.findIndex(Boolean);
+            if (next >= 0)
+                this._selectTab(next);
+        }
     }
 
     _applyReducedMotion() {
@@ -632,17 +682,21 @@ class ScratchpadIndicator extends PanelMenu.Button {
     _applyEditorSettings() {
         const wrap = this._settings.get_boolean('wrap-lines');
         const size = clamp(this._settings.get_int('font-size'), FONT_MIN, FONT_MAX);
-        const syntax = this._settings.get_boolean('syntax-highlighting');
+        const syntax = this._syntaxSwitch ? this._syntaxSwitch.state : this._settings.get_boolean('syntax-highlighting');
+        const markdown = this._markdownSwitch ? this._markdownSwitch.state : this._settings.get_boolean('markdown-styling');
 
         this._entry.clutter_text.line_wrap = wrap;
         this._scroll.hscrollbar_policy = wrap ? St.PolicyType.NEVER : St.PolicyType.AUTOMATIC;
-        this._wrapSwitch.state = wrap;
-        if (this._syntaxSwitch)
+        if (this._wrapSwitch && this._wrapSwitch.state !== wrap)
+            this._wrapSwitch.state = wrap;
+        if (this._syntaxSwitch && this._syntaxSwitch.state !== syntax)
             this._syntaxSwitch.state = syntax;
+        if (this._markdownSwitch && this._markdownSwitch.state !== markdown)
+            this._markdownSwitch.state = markdown;
         this._fontLabel.text = fmt(_('Font size: %d pt'), size);
 
         this._updateEntryStyle();
-        this._updateFormatting();
+        this._updateFormatting(this._activeTab, syntax, markdown);
     }
 
     _isSnippetsPad(index = this._activeTab) {
@@ -668,17 +722,21 @@ class ScratchpadIndicator extends PanelMenu.Button {
             this._entry.clutter_text.color = new Color({red: 255, green: 255, blue: 255, alpha: 255});
     }
 
-    _updateFormatting(index = this._activeTab) {
-        if (this._formatting || !this._entry?.clutter_text)
+    _updateFormatting(index = this._activeTab, enableSyntax, enableMarkdown) {
+        if (!this._entry?.clutter_text)
             return;
         this._formatting = true;
         try {
             const ct = this._entry.clutter_text;
             const isSnippets = this._isSnippetsPad(index);
-            const enableSyntax = this._settings.get_boolean('syntax-highlighting');
+            if (enableSyntax === undefined)
+                enableSyntax = this._syntaxSwitch ? this._syntaxSwitch.state : this._settings.get_boolean('syntax-highlighting');
+            if (enableMarkdown === undefined)
+                enableMarkdown = this._markdownSwitch ? this._markdownSwitch.state : this._settings.get_boolean('markdown-styling');
 
             const text = ct.get_text() || this._texts[index] || '';
-            const attrList = createSyntaxAttributes(text, isSnippets, enableSyntax);
+            const cursorPos = ct.has_key_focus() ? this._getCursor() : -1;
+            const attrList = createSyntaxAttributes(text, isSnippets, enableSyntax, enableMarkdown, cursorPos);
 
             if (attrList) {
                 ct.set_attributes(attrList);
@@ -688,7 +746,10 @@ class ScratchpadIndicator extends PanelMenu.Button {
                 this._hasCodeSnippetAttrs = false;
             }
             ct.color = new Color({red: 255, green: 255, blue: 255, alpha: 255});
+            ct.queue_relayout();
             ct.queue_redraw();
+            this._entry.queue_relayout();
+            this._entry.queue_redraw();
         } finally {
             this._formatting = false;
         }
@@ -936,6 +997,23 @@ class ScratchpadIndicator extends PanelMenu.Button {
 
     // ------------------------------------------------------------ editor --
 
+    _getCursor() {
+        const ct = this._entry.clutter_text;
+        const text = ct.get_text() || '';
+        const len = charCount(text);
+        const pos = ct.get_cursor_position();
+        return pos < 0 || pos > len ? len : pos;
+    }
+
+    _setCursor(pos) {
+        const ct = this._entry.clutter_text;
+        const text = ct.get_text() || '';
+        const len = charCount(text);
+        const p = pos < 0 || pos >= len ? -1 : pos;
+        ct.set_cursor_position(p);
+        ct.set_selection_bound(p);
+    }
+
     _showPad(index, cursor = this._cursors[index]) {
         const ct = this._entry.clutter_text;
         const text = this._texts[index];
@@ -948,10 +1026,7 @@ class ScratchpadIndicator extends PanelMenu.Button {
 
         this._updateFormatting(index);
 
-        const len = charCount(text);
-        const pos = cursor < 0 || cursor > len ? -1 : cursor;
-        ct.set_cursor_position(pos);
-        ct.set_selection_bound(pos);
+        this._setCursor(cursor);
 
         this._updateTabButtons();
         this._updateCounter();
@@ -960,7 +1035,8 @@ class ScratchpadIndicator extends PanelMenu.Button {
     }
 
     _selectTab(index) {
-        if (index === this._activeTab || index < 0 || index >= TOTAL_PADS)
+        const enabled = this._getEnabledPads();
+        if (!enabled[index] || index === this._activeTab || index < 0 || index >= TOTAL_PADS)
             return;
         this._cursors[this._activeTab] = this._entry.clutter_text.get_cursor_position();
         this._flush();
@@ -1026,34 +1102,152 @@ class ScratchpadIndicator extends PanelMenu.Button {
             return Clutter.EVENT_STOP;
         }
         if (ctrl && sym === Clutter.KEY_Page_Down) {
-            this._selectTab((this._activeTab + 1) % TOTAL_PADS);
+            const enabled = this._getEnabledPads();
+            for (let step = 1; step < TOTAL_PADS; step++) {
+                const next = (this._activeTab + step) % TOTAL_PADS;
+                if (enabled[next]) {
+                    this._selectTab(next);
+                    break;
+                }
+            }
             return Clutter.EVENT_STOP;
         }
         if (ctrl && sym === Clutter.KEY_Page_Up) {
-            this._selectTab((this._activeTab + TOTAL_PADS - 1) % TOTAL_PADS);
+            const enabled = this._getEnabledPads();
+            for (let step = 1; step < TOTAL_PADS; step++) {
+                const prev = (this._activeTab + TOTAL_PADS - step) % TOTAL_PADS;
+                if (enabled[prev]) {
+                    this._selectTab(prev);
+                    break;
+                }
+            }
             return Clutter.EVENT_STOP;
         }
         if (ctrl && !shift) {
             const idx = [Clutter.KEY_1, Clutter.KEY_2, Clutter.KEY_3].indexOf(sym);
             if (idx >= 0) {
-                this._selectTab(idx);
+                const enabled = this._getEnabledPads();
+                if (enabled[idx])
+                    this._selectTab(idx);
                 return Clutter.EVENT_STOP;
             }
         }
         // Tab inserts a real tab character (useful for snippets).
         if (sym === Clutter.KEY_Tab && !ctrl && !shift && ct.editable) {
             ct.delete_selection();
-            ct.insert_text('\t', ct.get_cursor_position());
+            const pos = this._getCursor();
+            ct.insert_text('\t', pos);
+            this._setCursor(pos + 1);
+            this._updateFormatting();
             return Clutter.EVENT_STOP;
         }
-        // Return / Enter inserts a newline character.
+        // Return / Enter handling:
         const isEnter = sym === Clutter.KEY_Return ||
             sym === Clutter.KEY_KP_Enter ||
             sym === Clutter.KEY_ISO_Enter ||
             sym === Clutter.KEY_Linefeed;
         if (isEnter && !alt && ct.editable) {
+            const isSnippets = this._isSnippetsPad(this._activeTab);
+            const enableMarkdown = !isSnippets &&
+                (this._markdownSwitch ? this._markdownSwitch.state : this._settings.get_boolean('markdown-styling'));
+
             ct.delete_selection();
-            ct.insert_text('\n', ct.get_cursor_position());
+            const text = ct.get_text() || '';
+            const pos = this._getCursor();
+
+            if (!enableMarkdown) {
+                ct.insert_text('\n', pos);
+                this._setCursor(pos + 1);
+                this._updateFormatting();
+                return Clutter.EVENT_STOP;
+            }
+
+            const lineStart = pos > 0 ? text.lastIndexOf('\n', pos - 1) + 1 : 0;
+            const nextNewline = text.indexOf('\n', pos);
+            const lineEnd = nextNewline === -1 ? text.length : nextNewline;
+            const line = text.slice(lineStart, lineEnd);
+
+            // 1. Horizontal rule: ---, ***, ___, ───
+            if (/^[ \t]*([*\-_─―—]){3,}[ \t]*$/.test(line)) {
+                const hr = '────────────────────────────────────────';
+                ct.delete_text(lineStart, lineEnd);
+                ct.insert_text(hr, lineStart);
+                const afterHr = lineStart + hr.length;
+                const curText = ct.get_text() || '';
+                if (afterHr >= curText.length || curText[afterHr] !== '\n') {
+                    ct.insert_text('\n', afterHr);
+                }
+                this._setCursor(afterHr + 1);
+                this._updateFormatting();
+                return Clutter.EVENT_STOP;
+            }
+
+            // 2. Empty heading: # , ## , ### ...
+            if (/^[ ]{0,3}#{1,6}\s*$/.test(line)) {
+                ct.delete_text(lineStart, lineEnd);
+                ct.insert_text('\n', lineStart);
+                this._setCursor(lineStart + 1);
+                this._updateFormatting();
+                return Clutter.EVENT_STOP;
+            }
+
+            // 3. Task lists / Checklists: - [ ] or - [x]
+            const checkMatch = /^([ \t]*)([-*+]|\d+\.)\s+\[([ xX])\]\s*(.*)$/.exec(line);
+            if (checkMatch) {
+                const [, indent, bullet, , content] = checkMatch;
+                if (content.trim() === '') {
+                    ct.delete_text(lineStart, lineEnd);
+                    this._setCursor(lineStart);
+                } else {
+                    const nextItem = `\n${indent}${bullet} [ ] `;
+                    ct.insert_text(nextItem, pos);
+                    this._setCursor(pos + nextItem.length);
+                }
+                this._updateFormatting();
+                return Clutter.EVENT_STOP;
+            }
+
+            // 4. Bullet / Numbered lists: - , * , + , 1.
+            const listMatch = /^([ \t]*)([-*+]|\d+\.)\s+(.*)$/.exec(line);
+            if (listMatch) {
+                const [, indent, bullet, content] = listMatch;
+                if (content.trim() === '') {
+                    ct.delete_text(lineStart, lineEnd);
+                    this._setCursor(lineStart);
+                } else if (/^\d+\.$/.test(bullet)) {
+                    const nextNum = parseInt(bullet, 10) + 1;
+                    const nextItem = `\n${indent}${nextNum}. `;
+                    ct.insert_text(nextItem, pos);
+                    this._setCursor(pos + nextItem.length);
+                } else {
+                    const nextItem = `\n${indent}${bullet} `;
+                    ct.insert_text(nextItem, pos);
+                    this._setCursor(pos + nextItem.length);
+                }
+                this._updateFormatting();
+                return Clutter.EVENT_STOP;
+            }
+
+            // 5. Blockquotes: > quote
+            const quoteMatch = /^([ \t]*>\s*)(.*)$/.exec(line);
+            if (quoteMatch) {
+                const [, prefix, content] = quoteMatch;
+                if (content.trim() === '') {
+                    ct.delete_text(lineStart, lineEnd);
+                    this._setCursor(lineStart);
+                } else {
+                    const nextItem = `\n${prefix}`;
+                    ct.insert_text(nextItem, pos);
+                    this._setCursor(pos + nextItem.length);
+                }
+                this._updateFormatting();
+                return Clutter.EVENT_STOP;
+            }
+
+            // 6. Default (including Headings with text: e.g. ## Címsor)
+            ct.insert_text('\n', pos);
+            this._setCursor(pos + 1);
+            this._updateFormatting();
             return Clutter.EVENT_STOP;
         }
         return Clutter.EVENT_PROPAGATE;

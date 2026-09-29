@@ -2,7 +2,7 @@
 # Builds from the local checkout:  cd packaging/arch && makepkg -si
 
 pkgname=gnome-shell-extension-scratchpad
-pkgver=1.0.0
+pkgver=1.0.1
 pkgrel=1
 pkgdesc="Minimalist quick-notes scratchpad in the GNOME top bar"
 arch=('any')

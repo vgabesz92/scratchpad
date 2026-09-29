@@ -182,19 +182,17 @@
 }
 
 .scratchpad-history-dropdown-wrapper {
-  margin: 4px 6px 6px 6px;
+  margin: 4px 10px 6px 10px;
   color: #ffffff;
 }
 
 .scratchpad-history-dropdown {
   spacing: 4px;
   padding: 8px 10px;
-  border-radius: 14px;
-  background-color: rgba(127, 127, 127, 0.14);
-  border: 1px solid rgba(127, 127, 127, 0.18);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.30);
+  border-radius: 12px;
+  background-color: rgba(127, 127, 127, 0.08);
+  border: 1px solid rgba(127, 127, 127, 0.14);
   min-width: 280px;
-  max-width: 440px;
   color: #ffffff;
 }
 .scratchpad-history-dropdown StLabel {
@@ -263,7 +261,6 @@
 .scratchpad-history-row-name {
   font-size: 0.9em;
   font-weight: 500;
-  max-width: 200px;
   color: #ffffff;
 }
 .scratchpad-history-row.scratchpad-recent-active .scratchpad-history-row-name {

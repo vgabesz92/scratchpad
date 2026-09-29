@@ -80,20 +80,45 @@ export default class ScratchpadPreferences extends ExtensionPreferences {
         settings.bind('syntax-highlighting', syntax, 'active', Gio.SettingsBindFlags.DEFAULT);
         group.add(syntax);
 
-        group.add(this._spinRow(settings, 'font-size', _('Font size'), _('In points'), 10, 24, 1));
+        const markdown = new Adw.SwitchRow({
+            title: _('Markdown styling'),
+            subtitle: _('Highlight markdown headings, bold, italic, quotes and lists'),
+        });
+        settings.bind('markdown-styling', markdown, 'active', Gio.SettingsBindFlags.DEFAULT);
+        group.add(markdown);
+
+        group.add(this._spinRow(settings, 'font-size', _('Font size'), _('In points'), 6, 24, 1));
         return group;
     }
 
     _padsGroup(settings) {
         const group = new Adw.PreferencesGroup({
             title: _('Pads'),
-            description: _('Leave a name empty to use the default.'),
+            description: _('Leave a name empty to use the default. Changes are finalized by pressing Enter.'),
         });
         const defaults = [_('Notes'), _('Snippets'), _('Scratch')];
 
         const getSavedName = i => {
             const current = settings.get_strv('tab-names');
             return (current[i] ?? '').trim();
+        };
+
+        const getEnabledPads = () => {
+            try {
+                if (settings.settings_schema?.has_key('enabled-pads')) {
+                    const val = settings.get_value('enabled-pads');
+                    const arr = val?.deep_unpack();
+                    if (Array.isArray(arr) && arr.length >= 3) {
+                        if (arr.some(Boolean))
+                            return arr.slice(0, 3);
+                    }
+                }
+            } catch (_) {}
+            return [true, true, true];
+        };
+
+        const setEnabledPads = pads => {
+            settings.set_value('enabled-pads', new GLib.Variant('ab', pads));
         };
 
         const rows = [];
@@ -117,16 +142,16 @@ export default class ScratchpadPreferences extends ExtensionPreferences {
                 icon_name: 'user-trash-symbolic',
                 valign: Gtk.Align.CENTER,
                 css_classes: ['flat'],
-                tooltip_text: _('Delete'),
-                sensitive: savedName.length > 0,
+                tooltip_text: _('Delete pad'),
             });
 
-            const updateButtons = () => {
-                const text = row.text.trim();
-                const currentSaved = getSavedName(i);
-                saveBtn.sensitive = text !== currentSaved;
-                deleteBtn.sensitive = text.length > 0 || currentSaved.length > 0;
-            };
+            const restoreBtn = new Gtk.Button({
+                icon_name: 'edit-undo-symbolic',
+                valign: Gtk.Align.CENTER,
+                css_classes: ['flat'],
+                tooltip_text: _('Restore pad'),
+                visible: false,
+            });
 
             const save = () => {
                 const current = settings.get_strv('tab-names');
@@ -138,8 +163,6 @@ export default class ScratchpadPreferences extends ExtensionPreferences {
                 row.text = newName;
 
                 saveBtn.sensitive = false;
-                deleteBtn.sensitive = newName.length > 0;
-
                 saveBtn.icon_name = 'object-select-symbolic';
                 GLib.timeout_add(GLib.PRIORITY_DEFAULT, 1000, () => {
                     saveBtn.icon_name = 'document-save-symbolic';
@@ -147,28 +170,89 @@ export default class ScratchpadPreferences extends ExtensionPreferences {
                 });
             };
 
-            const del = () => {
-                row.text = '';
-                const current = settings.get_strv('tab-names');
-                while (current.length < 3)
-                    current.push('');
-                current[i] = '';
-                settings.set_strv('tab-names', current.slice(0, 3));
+            deleteBtn.connect('clicked', () => {
+                const enabled = getEnabledPads();
+                if (enabled.filter(Boolean).length <= 1)
+                    return;
+                row.text = getSavedName(i);
+                enabled[i] = false;
+                setEnabledPads(enabled);
+                updateAllRows();
+            });
 
-                saveBtn.sensitive = false;
-                deleteBtn.sensitive = false;
-            };
+            restoreBtn.connect('clicked', () => {
+                const enabled = getEnabledPads();
+                enabled[i] = true;
+                setEnabledPads(enabled);
+                updateAllRows();
+            });
 
-            row.connect('changed', updateButtons);
+            row.connect('changed', () => {
+                const text = row.text.trim();
+                const currentSaved = getSavedName(i);
+                saveBtn.sensitive = text !== currentSaved;
+            });
             row.connect('entry-activated', save);
             saveBtn.connect('clicked', save);
-            deleteBtn.connect('clicked', del);
 
             row.add_suffix(saveBtn);
             row.add_suffix(deleteBtn);
+            row.add_suffix(restoreBtn);
             group.add(row);
-            rows.push({row, updateButtons});
+            rows.push({row, saveBtn, deleteBtn, restoreBtn});
         }
+
+        const resetRow = new Adw.ActionRow({
+            title: _('Restore default pads'),
+            subtitle: _('Re-enable all three pads'),
+        });
+        const resetBtn = new Gtk.Button({
+            label: _('Restore all'),
+            valign: Gtk.Align.CENTER,
+            css_classes: ['flat'],
+        });
+        resetBtn.connect('clicked', () => {
+            setEnabledPads([true, true, true]);
+            updateAllRows();
+        });
+        resetRow.add_suffix(resetBtn);
+        resetRow.activatable_widget = resetBtn;
+        group.add(resetRow);
+
+        const updateAllRows = () => {
+            const enabled = getEnabledPads();
+            const enabledCount = enabled.filter(Boolean).length;
+
+            for (let i = 0; i < 3; i++) {
+                const isEnabled = enabled[i];
+                const {row, saveBtn, deleteBtn, restoreBtn} = rows[i];
+                const currentSaved = getSavedName(i);
+                const text = row.text.trim();
+
+                if (isEnabled) {
+                    row.title = fmt(_('Pad %d (default: %s)'), i + 1, defaults[i]);
+                    row.set_editable(true);
+                    saveBtn.visible = true;
+                    deleteBtn.visible = true;
+                    restoreBtn.visible = false;
+
+                    saveBtn.sensitive = text !== currentSaved;
+                    deleteBtn.sensitive = enabledCount > 1;
+                    deleteBtn.tooltip_text = enabledCount > 1
+                        ? _('Delete pad')
+                        : _('At least one pad must remain active');
+                } else {
+                    row.title = fmt(_('Pad %d (default: %s) — Deleted'), i + 1, defaults[i]);
+                    row.set_editable(false);
+                    saveBtn.visible = false;
+                    deleteBtn.visible = false;
+                    restoreBtn.visible = true;
+                    restoreBtn.sensitive = true;
+                }
+            }
+
+            resetRow.visible = enabledCount < 3;
+        };
 
         settings.connect('changed::tab-names', () => {
             const current = settings.get_strv('tab-names');
@@ -176,10 +260,14 @@ export default class ScratchpadPreferences extends ExtensionPreferences {
                 const saved = (current[i] ?? '').trim();
                 if (rows[i].row.text.trim() !== saved) {
                     rows[i].row.text = saved;
-                    rows[i].updateButtons();
                 }
             }
+            updateAllRows();
         });
+
+        settings.connect('changed::enabled-pads', updateAllRows);
+
+        updateAllRows();
 
         return group;
     }

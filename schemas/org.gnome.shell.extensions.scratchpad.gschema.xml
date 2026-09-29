@@ -16,6 +16,12 @@
       <description>Three names; an empty string uses the localized default (Notes, Snippets, Scratch).</description>
     </key>
 
+    <key name="enabled-pads" type="ab">
+      <default>[true, true, true]</default>
+      <summary>Enabled pads</summary>
+      <description>Whether each of the three pads is enabled and visible.</description>
+    </key>
+
     <key name="wrap-lines" type="b">
       <default>true</default>
       <summary>Word wrap</summary>
@@ -27,13 +33,19 @@
       <description>Enable syntax highlighting for code blocks and snippets.</description>
     </key>
 
+    <key name="markdown-styling" type="b">
+      <default>true</default>
+      <summary>Markdown styling</summary>
+      <description>Enable styling for markdown headings, bold, italic, quotes and lists.</description>
+    </key>
+
     <key name="monospace" type="b">
       <default>false</default>
       <summary>Use a monospace font in the editor (deprecated)</summary>
     </key>
 
     <key name="font-size" type="i">
-      <range min="10" max="24"/>
+      <range min="6" max="24"/>
       <default>14</default>
       <summary>Editor font size in points</summary>
     </key>

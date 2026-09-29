@@ -40,7 +40,7 @@ Támogatott GNOME Shell verzió: **50**, **51**.
 - **Legutóbbi fájlok és gyors betöltés** — A kategóriák utolsó 5 mentett fájlja megjelenik egy gyorsgomb-sávban az 1-kattintásos betöltéshez. Több mint 5 fájl esetén a „Betöltés…” gomb egy fiókot nyit meg az összes fájl listájával, dátumokkal és törlési lehetőséggel, valamint natív fájlválasztó portállal.
 - **Biztonságos törlés visszavonással** — Törlés előtt automatikusan biztonsági mentést készít (`pad_N.md.bak`), majd 5 másodpercig megjelenít egy visszavonási sávot.
 - **Szó- és karakterszámláló**, valamint valós idejű mentési állapotjelző.
-- **Beállítások fiók** — Sortörés (word wrap), betűméret-állítás (10–24 pt), szintaxiskiemelés ki/bekapcsolása; monospaced betűtípus a kódrészletekhez.
+- **Beállítások fiók** — Sortörés (word wrap), betűméret-állítás (6–24 pt), szintaxiskiemelés ki/bekapcsolása; monospaced betűtípus a kódrészletekhez.
 - **GNOME integráció** — Globális gyorsbillentyű (alapértelmezett: `Super+Alt+N`), panelpozíció (bal / közép / jobb), egérrel átméretezhető szélesség (300–1200 px), Libadwaita beállítóablak, a rendszer kiemelőszínéhez (accent color) igazodó felület.
 - **Csökkentett mozgás támogatása** — Követi a GNOME 51 rendszerbeállításait.
 - **Többnyelvűség** — Magyar, Angol, Török fordítás.
@@ -64,7 +64,7 @@ Támogatott GNOME Shell verzió: **50**, **51**.
 
 A [`packages/`](packages/) mappából közvetlenül letölthetők az előre összeállított csomagok:
 - **GNOME Shell kiterjesztés ZIP:** [`packages/scratchpad@gavnir.shell-extension.zip`](packages/scratchpad@gavnir.shell-extension.zip)
-- **Arch Linux Pacman csomag:** [`packages/gnome-shell-extension-scratchpad-1.0.0-1-any.pkg.tar.zst`](packages/gnome-shell-extension-scratchpad-1.0.0-1-any.pkg.tar.zst)
+- **Arch Linux Pacman csomag:** [`packages/gnome-shell-extension-scratchpad-1.0.1-1-any.pkg.tar.zst`](packages/gnome-shell-extension-scratchpad-1.0.1-1-any.pkg.tar.zst)
 
 ### Felhasználói telepítés forrásból
 
@@ -81,7 +81,7 @@ gnome-extensions enable scratchpad@gavnir
 ./build.sh pacman
 
 # Telepítés pacman segítségével:
-sudo pacman -U dist/gnome-shell-extension-scratchpad-1.0.0-1-any.pkg.tar.zst
+sudo pacman -U dist/gnome-shell-extension-scratchpad-1.0.1-1-any.pkg.tar.zst
 
 # Vagy közvetlenül a makepkg-vel:
 cd packaging/arch
@@ -161,7 +161,7 @@ Supports GNOME Shell **50** and **51**.
 - **Non-destructive clear** — writes `pad_N.md.bak` first, then shows a 5-second
   undo banner.
 - **Word & character counter**, save status indicator.
-- **Settings drawer** — word wrap, font size stepper (10–24 pt), syntax highlighting toggle; automatic monospace font for code snippets and the snippets pad.
+- **Settings drawer** — word wrap, font size stepper (6–24 pt), syntax highlighting toggle; automatic monospace font for code snippets and the snippets pad.
 - **GNOME integration** — global toggle shortcut (default `Super+Alt+N`),
   panel position (left / center / right), mouse-draggable resizable width (300–1200 px),
   adjustable popup size, accent-color aware styling, libadwaita preferences window,
@@ -188,7 +188,7 @@ Supports GNOME Shell **50** and **51**.
 
 Download ready-to-use packages directly from the [`packages/`](packages/) directory:
 - **GNOME Shell extension ZIP:** [`packages/scratchpad@gavnir.shell-extension.zip`](packages/scratchpad@gavnir.shell-extension.zip)
-- **Arch Linux Pacman package:** [`packages/gnome-shell-extension-scratchpad-1.0.0-1-any.pkg.tar.zst`](packages/gnome-shell-extension-scratchpad-1.0.0-1-any.pkg.tar.zst)
+- **Arch Linux Pacman package:** [`packages/gnome-shell-extension-scratchpad-1.0.1-1-any.pkg.tar.zst`](packages/gnome-shell-extension-scratchpad-1.0.1-1-any.pkg.tar.zst)
 
 ### User install from source
 
@@ -205,7 +205,7 @@ gnome-extensions enable scratchpad@gavnir
 ./build.sh pacman
 
 # Install using pacman:
-sudo pacman -U dist/gnome-shell-extension-scratchpad-1.0.0-1-any.pkg.tar.zst
+sudo pacman -U dist/gnome-shell-extension-scratchpad-1.0.1-1-any.pkg.tar.zst
 
 # Or directly with makepkg:
 cd packaging/arch

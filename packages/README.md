@@ -23,10 +23,10 @@ gnome-extensions enable scratchpad@gavnir
 
 ## 2. Arch Linux Pacman csomag (Rendszerszintű / System-wide)
 
-- **Fájl / File:** [`gnome-shell-extension-scratchpad-1.0.0-1-any.pkg.tar.zst`](gnome-shell-extension-scratchpad-1.0.0-1-any.pkg.tar.zst)
+- **Fájl / File:** [`gnome-shell-extension-scratchpad-1.0.1-1-any.pkg.tar.zst`](gnome-shell-extension-scratchpad-1.0.1-1-any.pkg.tar.zst)
 
 ### Telepítés / Installation:
 ```sh
-sudo pacman -U gnome-shell-extension-scratchpad-1.0.0-1-any.pkg.tar.zst
+sudo pacman -U gnome-shell-extension-scratchpad-1.0.1-1-any.pkg.tar.zst
 gnome-extensions enable scratchpad@gavnir
 ```

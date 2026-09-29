@@ -6,5 +6,5 @@
   "url": "https://github.com/vgabesz92/scratchpad",
   "settings-schema": "org.gnome.shell.extensions.scratchpad",
   "gettext-domain": "scratchpad@gavnir",
-  "version-name": "1.0.0"
+  "version-name": "1.0.1"
 }
