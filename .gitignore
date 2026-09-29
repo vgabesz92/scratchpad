@@ -1,16 +1,50 @@
 # Build & distribution artifacts
 /dist/
 *.mo
+gschemas.compiled
 /schemas/gschemas.compiled
 
 # Archive files (allow pre-built packages in /packages/)
 /*.zip
 /*.tar.*
-/*.pkg.tar.zst
+/*.pkg.tar*
 !/packages/
 !/packages/*
 
 # Arch packaging build dirs
 /packaging/arch/pkg/
 /packaging/arch/src/
-/packaging/arch/*.pkg.tar.zst
+/packaging/arch/*.pkg.tar*
+/packaging/arch/*.log
+/packaging/arch/*.log.*
+
+# Editor and IDE configurations
+.vscode/
+.idea/
+*.code-workspace
+*.sublime-project
+*.sublime-workspace
+
+# Temporary, backup and swap files
+*~
+*.swp
+*.swo
+.*.sw[a-z]
+*.bak
+*.tmp
+*.orig
+*.rej
+po/*.po~
+po/*~
+
+# Logs and debugging
+*.log
+
+# OS-specific metadata
+.DS_Store
+Thumbs.db
+ehthumbs.db
+
+# Local test pad files
+pad_*.md
+pad_*.md.bak
