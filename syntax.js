@@ -30,7 +30,12 @@ const THEME_COLORS = {
     'diff-meta':       '#79c0ff', // Cyan: diff chunk headers
     'fence-marker':    '#6e7681', // Dim gray: ``` and ~~~ fence backticks
     'fence-lang':      '#58a6ff', // Vibrant cyan-blue (bold): language identifier
-    'markdown-header':        '#79c0ff', // Sky blue (bold): markdown headers
+    'markdown-header-1':      '#58a6ff', // Vivid blue (ultrabold, underline): H1
+    'markdown-header-2':      '#79c0ff', // Sky blue (ultrabold): H2
+    'markdown-header-3':      '#a5d6ff', // Soft light blue (bold): H3
+    'markdown-header-4':      '#8b949e', // Muted slate (bold): H4
+    'markdown-header-5':      '#8b949e', // Muted slate (bold): H5
+    'markdown-header-6':      '#6e7681', // Dim gray (bold): H6
     'markdown-header-prefix': '#6e7681', // Dim gray: # / ## prefix when editing
     'markdown-bold':          '#e6edf3', // Bright white (bold): bold text
     'markdown-italic':        '#e6edf3', // Bright white (italic): italic text
@@ -45,12 +50,12 @@ const THEME_COLORS = {
 };
 
 const HEADER_SCALES = {
-    1: 1.35,
-    2: 1.22,
-    3: 1.14,
-    4: 1.07,
-    5: 1.02,
-    6: 1.0,
+    1: 1.55,
+    2: 1.35,
+    3: 1.18,
+    4: 1.08,
+    5: 1.0,
+    6: 0.95,
 };
 
 function hexToPangoRgb(hex) {
@@ -573,7 +578,7 @@ export function getCodeSnippetRanges(text) {
  * @param {boolean} [enableSyntax=true] Whether syntax color highlighting is enabled
  * @returns {Pango.AttrList|null}
  */
-export function createSyntaxAttributes(text, isSnippetsPad, enableSyntax = true, enableMarkdown = true, cursorPos = -1) {
+export function createSyntaxAttributes(text, isSnippetsPad, enableSyntax = true, enableMarkdown = true, cursorPos = -1, editorWidthPx = 0, fontSize = 14) {
     if (!text)
         return null;
 
@@ -754,6 +759,149 @@ export function createSyntaxAttributes(text, isSnippetsPad, enableSyntax = true,
             continue;
         }
 
+        // Horizontal rule (--- / *** / ___ / ───): render as a single line taking panel width into account
+        if (token.type === 'markdown-hr') {
+            const inHr = cursorPos >= 0 && cursorPos >= token.start && cursorPos <= token.end;
+            const hrRgb = PANGO_COLORS['markdown-hr'];
+
+            if (!inHr && editorWidthPx > 0) {
+                const tokenText = text.slice(token.start, token.end);
+                const isBox = /[─―—]/.test(tokenText);
+                const charCount = token.end - token.start;
+                const targetW = editorWidthPx * 0.86;
+                const baseCharW = Math.max(8, fontSize * 1.35);
+
+                if (isBox) {
+                    // Box-drawing line (e.g. ───────): already a solid line.
+                    // Color it, and scale down if it exceeds target width so it never wraps.
+                    if (hrRgb) {
+                        const colorAttr = Pango.attr_foreground_new(hrRgb[0], hrRgb[1], hrRgb[2]);
+                        colorAttr.start_index = startByte;
+                        colorAttr.end_index = endByte;
+                        attrList.insert(colorAttr);
+                    }
+                    const estW = charCount * baseCharW;
+                    if (estW > targetW) {
+                        const scale = Math.max(0.1, targetW / estW);
+                        const scaleAttr = Pango.attr_scale_new(scale);
+                        scaleAttr.start_index = startByte;
+                        scaleAttr.end_index = endByte;
+                        attrList.insert(scaleAttr);
+                    }
+                    hasAttrs = true;
+                } else if (charCount <= 5) {
+                    // Short HR markup like '---', '***', '___':
+                    // Render as a single horizontal line using strikethrough.
+                    const alphaAttr = Pango.attr_foreground_alpha_new(0);
+                    alphaAttr.start_index = startByte;
+                    alphaAttr.end_index = endByte;
+                    attrList.insert(alphaAttr);
+
+                    const strikeAttr = Pango.attr_strikethrough_new(true);
+                    strikeAttr.start_index = startByte;
+                    strikeAttr.end_index = endByte;
+                    attrList.insert(strikeAttr);
+
+                    if (hrRgb) {
+                        const strikeColorAttr = Pango.attr_strikethrough_color_new(hrRgb[0], hrRgb[1], hrRgb[2]);
+                        strikeColorAttr.start_index = startByte;
+                        strikeColorAttr.end_index = endByte;
+                        attrList.insert(strikeColorAttr);
+                    }
+
+                    // Spread the characters so the line spans targetW on a single line.
+                    // We only apply letter spacing up to the second-to-last char so the last glyph never overflows.
+                    if (charCount > 1) {
+                        const maxSpacing = Math.max(0, (targetW - 20) / (charCount - 0.4));
+                        const spacingPango = Math.round(maxSpacing * Pango.SCALE);
+                        const spacingAttr = Pango.attr_letter_spacing_new(spacingPango);
+                        spacingAttr.start_index = startByte;
+                        const lastCharOffset = token.end - 1;
+                        spacingAttr.end_index = charToByte[Math.min(lastCharOffset, textLen)];
+                        attrList.insert(spacingAttr);
+                    }
+
+                    hasAttrs = true;
+                } else {
+                    // Longer hyphen/asterisk line (e.g. '---------------------'):
+                    if (hrRgb) {
+                        const colorAttr = Pango.attr_foreground_new(hrRgb[0], hrRgb[1], hrRgb[2]);
+                        colorAttr.start_index = startByte;
+                        colorAttr.end_index = endByte;
+                        attrList.insert(colorAttr);
+                    }
+                    const estW = charCount * (fontSize * 0.8);
+                    if (estW > targetW) {
+                        const scale = Math.max(0.1, targetW / estW);
+                        const scaleAttr = Pango.attr_scale_new(scale);
+                        scaleAttr.start_index = startByte;
+                        scaleAttr.end_index = endByte;
+                        attrList.insert(scaleAttr);
+                    }
+                    hasAttrs = true;
+                }
+            } else {
+                // Cursor is on the HR line — show raw text with muted color
+                if (hrRgb) {
+                    const colorAttr = Pango.attr_foreground_new(hrRgb[0], hrRgb[1], hrRgb[2]);
+                    colorAttr.start_index = startByte;
+                    colorAttr.end_index = endByte;
+                    attrList.insert(colorAttr);
+                    hasAttrs = true;
+                }
+            }
+            continue;
+        }
+        // Markdown headers: per-level color, weight, scale, and H1 underline
+        if (token.type === 'markdown-header') {
+            const level = token.level || 1;
+
+            // Per-level color (falls back to H1 if missing)
+            const headerRgb = PANGO_COLORS[`markdown-header-${level}`] || PANGO_COLORS['markdown-header-1'];
+            if (headerRgb) {
+                const colorAttr = Pango.attr_foreground_new(headerRgb[0], headerRgb[1], headerRgb[2]);
+                colorAttr.start_index = startByte;
+                colorAttr.end_index = endByte;
+                attrList.insert(colorAttr);
+                hasAttrs = true;
+            }
+
+            // H1–H2: ULTRABOLD (800), H3+: BOLD (700)
+            const weight = level <= 2 ? Pango.Weight.ULTRABOLD : Pango.Weight.BOLD;
+            const weightAttr = Pango.attr_weight_new(weight);
+            weightAttr.start_index = startByte;
+            weightAttr.end_index = endByte;
+            attrList.insert(weightAttr);
+            hasAttrs = true;
+
+            // Scale by level
+            const scale = HEADER_SCALES[level] || 1.2;
+            const scaleAttr = Pango.attr_scale_new(scale);
+            scaleAttr.start_index = startByte;
+            scaleAttr.end_index = endByte;
+            attrList.insert(scaleAttr);
+            hasAttrs = true;
+
+            // H1: underline for extra visual weight (like GitHub rendering)
+            if (level === 1) {
+                const ulAttr = Pango.attr_underline_new(Pango.Underline.SINGLE);
+                ulAttr.start_index = startByte;
+                ulAttr.end_index = endByte;
+                attrList.insert(ulAttr);
+
+                const ulColorRgb = PANGO_COLORS['markdown-header-1'];
+                if (ulColorRgb) {
+                    const ulColorAttr = Pango.attr_underline_color_new(ulColorRgb[0], ulColorRgb[1], ulColorRgb[2]);
+                    ulColorAttr.start_index = startByte;
+                    ulColorAttr.end_index = endByte;
+                    attrList.insert(ulColorAttr);
+                }
+                hasAttrs = true;
+            }
+
+            continue;
+        }
+
         const rgb = PANGO_COLORS[token.type];
         if (rgb) {
             const colorAttr = Pango.attr_foreground_new(rgb[0], rgb[1], rgb[2]);
@@ -769,20 +917,11 @@ export function createSyntaxAttributes(text, isSnippetsPad, enableSyntax = true,
             italicAttr.end_index = endByte;
             attrList.insert(italicAttr);
             hasAttrs = true;
-        } else if (token.type === 'fence-lang' || token.type === 'markdown-header' || token.type === 'markdown-bold') {
+        } else if (token.type === 'fence-lang' || token.type === 'markdown-bold') {
             const boldAttr = Pango.attr_weight_new(Pango.Weight.BOLD);
             boldAttr.start_index = startByte;
             boldAttr.end_index = endByte;
             attrList.insert(boldAttr);
-            hasAttrs = true;
-        }
-
-        if (token.type === 'markdown-header') {
-            const scale = HEADER_SCALES[token.level] || 1.2;
-            const scaleAttr = Pango.attr_scale_new(scale);
-            scaleAttr.start_index = startByte;
-            scaleAttr.end_index = endByte;
-            attrList.insert(scaleAttr);
             hasAttrs = true;
         }
 

@@ -275,6 +275,13 @@ export default class ScratchpadPreferences extends ExtensionPreferences {
     _popupGroup(settings) {
         const group = new Adw.PreferencesGroup({title: _('Popup')});
 
+        const indicator = new Adw.SwitchRow({
+            title: _('Show panel icon'),
+            subtitle: _('Show the Scratchpad icon in the top bar. You can still open it with the keyboard shortcut.'),
+        });
+        settings.bind('show-indicator', indicator, 'active', Gio.SettingsBindFlags.DEFAULT);
+        group.add(indicator);
+
         const position = new Adw.ComboRow({
             title: _('Panel position'),
             model: Gtk.StringList.new([_('Left'), _('Center'), _('Right')]),
@@ -284,8 +291,107 @@ export default class ScratchpadPreferences extends ExtensionPreferences {
             settings.set_string('panel-position', POSITIONS[position.selected]));
         group.add(position);
 
-        group.add(this._spinRow(settings, 'popup-width', _('Width'), _('In pixels'), 300, 1200, 10));
-        group.add(this._spinRow(settings, 'popup-height', _('Height'), _('In pixels'), 300, 1000, 10));
+        const DISPLAY_MODES = ['popup', 'sidebar-left', 'sidebar-right'];
+        const displayModeRow = new Adw.ComboRow({
+            title: _('Display mode'),
+            subtitle: _('Show as a top bar dropdown popup or a full-height sidebar'),
+            model: Gtk.StringList.new([_('Popup menu'), _('Left sidebar'), _('Right sidebar')]),
+        });
+        displayModeRow.selected = Math.max(0, DISPLAY_MODES.indexOf(settings.get_string('display-mode')));
+        displayModeRow.connect('notify::selected', () =>
+            settings.set_string('display-mode', DISPLAY_MODES[displayModeRow.selected]));
+        group.add(displayModeRow);
+
+        // --- Size presets ---
+        const SIZE_PRESETS = [
+            {label: _('Small'),  w: 340, h: 400},
+            {label: _('Medium'), w: 480, h: 540},
+            {label: _('Large'),  w: 680, h: 700},
+        ];
+        const CUSTOM_INDEX = SIZE_PRESETS.length; // last entry
+
+        const presetLabels = SIZE_PRESETS.map(p => p.label);
+        presetLabels.push(_('Custom'));
+
+        const presetRow = new Adw.ComboRow({
+            title: _('Size'),
+            subtitle: _('Preset popup dimensions or set a custom size below'),
+            model: Gtk.StringList.new(presetLabels),
+        });
+
+        const widthRow = this._spinRow(settings, 'popup-width', _('Width'), _('In pixels'), 250, 1400, 10);
+        const heightRow = this._spinRow(settings, 'popup-height', _('Height'), _('In pixels'), 200, 1200, 10);
+
+        // Sync sensitivity of height and preset rows with display mode
+        const syncDisplayMode = () => {
+            const mode = settings.get_string('display-mode');
+            const isPopup = mode === 'popup';
+            heightRow.sensitive = isPopup;
+            heightRow.subtitle = isPopup ? _('In pixels') : _('Automatic (full display height)');
+            presetRow.sensitive = isPopup;
+        };
+        settings.connect('changed::display-mode', syncDisplayMode);
+        displayModeRow.connect('notify::selected', syncDisplayMode);
+        syncDisplayMode();
+
+        // Determine initial preset selection
+        const matchPreset = () => {
+            const w = settings.get_int('popup-width');
+            const h = settings.get_int('popup-height');
+            const idx = SIZE_PRESETS.findIndex(p => p.w === w && p.h === h);
+            return idx >= 0 ? idx : CUSTOM_INDEX;
+        };
+
+        let suppressPresetSync = false;
+
+        presetRow.selected = matchPreset();
+        presetRow.connect('notify::selected', () => {
+            if (suppressPresetSync)
+                return;
+            const idx = presetRow.selected;
+            if (idx < SIZE_PRESETS.length) {
+                const {w, h} = SIZE_PRESETS[idx];
+                settings.set_int('popup-width', w);
+                settings.set_int('popup-height', h);
+            }
+        });
+
+        // When spin rows change, switch preset to Custom if it no longer matches
+        const onSizeChanged = () => {
+            if (suppressPresetSync)
+                return;
+            suppressPresetSync = true;
+            presetRow.selected = matchPreset();
+            suppressPresetSync = false;
+        };
+        settings.connect('changed::popup-width', onSizeChanged);
+        settings.connect('changed::popup-height', onSizeChanged);
+
+        group.add(presetRow);
+        group.add(widthRow);
+        group.add(heightRow);
+
+        // --- Reset to default ---
+        const DEFAULT_W = 380;
+        const DEFAULT_H = 440;
+        const resetRow = new Adw.ActionRow({
+            title: _('Reset size'),
+            subtitle: fmt(_('Default: %d × %d px'), DEFAULT_W, DEFAULT_H),
+        });
+        const resetBtn = new Gtk.Button({
+            icon_name: 'edit-undo-symbolic',
+            valign: Gtk.Align.CENTER,
+            css_classes: ['flat'],
+            tooltip_text: _('Reset to default size'),
+        });
+        resetBtn.connect('clicked', () => {
+            settings.set_int('popup-width', DEFAULT_W);
+            settings.set_int('popup-height', DEFAULT_H);
+        });
+        resetRow.add_suffix(resetBtn);
+        resetRow.activatable_widget = resetBtn;
+        group.add(resetRow);
+
         return group;
     }
 

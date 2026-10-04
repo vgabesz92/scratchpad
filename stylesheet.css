@@ -13,7 +13,7 @@
 
 .scratchpad-root {
   spacing: 8px;
-  padding: 4px 6px;
+  padding: 10px 14px 12px 14px;
 }
 
 .scratchpad-root StLabel,
@@ -182,7 +182,7 @@
 }
 
 .scratchpad-history-dropdown-wrapper {
-  margin: 4px 10px 6px 10px;
+  margin: 4px 14px 6px 14px;
   color: #ffffff;
 }
 
@@ -364,7 +364,7 @@ StEntry.scratchpad-editor StLabel.hint-text {
 
 .scratchpad-footer {
   spacing: 8px;
-  padding-top: 4px;
+  padding: 2px 4px;
   color: #ffffff;
 }
 
@@ -513,7 +513,27 @@ StEntry.scratchpad-editor StLabel.hint-text {
   color: #ffffff;
 }
 
-/* ---- resizable width/height container & handles ---- */
+/* ---- display mode: sidebar ---- */
+
+.scratchpad-sidebar {
+  -arrow-rise: 0px;
+  -boxpointer-gap: 0px;
+  -arrow-border-radius: 0px;
+}
+
+.scratchpad-sidebar-left,
+.scratchpad-sidebar-left .popup-menu-content {
+  border-left-width: 0px;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+}
+
+.scratchpad-sidebar-right,
+.scratchpad-sidebar-right .popup-menu-content {
+  border-right-width: 0px;
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
 
 .scratchpad-container {
   spacing: 0;

@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: scratchpad 1.0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-29 09:19+0200\n"
+"POT-Creation-Date: 2026-10-02 16:02+0200\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -15,211 +15,209 @@ msgstr ""
 msgid "Today, %s:%s"
 msgstr "Ma, %s:%s"
 
-#: indicator.js:130 indicator.js:1549 indicator.js:1554 indicator.js:1569
-#: indicator.js:1573 indicator.js:1688 indicator.js:1692 indicator.js:1746
-#: indicator.js:1749 prefs.js:352
+#: indicator.js:130 indicator.js:1807 indicator.js:1812 indicator.js:1827
+#: indicator.js:1831 indicator.js:1946 indicator.js:1950 indicator.js:2004
+#: indicator.js:2007 prefs.js:458
 msgid "Scratchpad"
 msgstr "Jegyzetfüzet"
 
-#: indicator.js:252 indicator.js:532
+#: indicator.js:294 indicator.js:582
 msgid "Settings"
 msgstr "Beállítások"
 
-#: indicator.js:270 prefs.js:70
+#: indicator.js:312 prefs.js:70
 msgid "Word wrap"
 msgstr "Sortörés"
 
-#: indicator.js:271 prefs.js:77
+#: indicator.js:313 prefs.js:77
 msgid "Syntax highlighting"
 msgstr "Szintaktikai kiemelés"
 
-#: indicator.js:272 prefs.js:84
+#: indicator.js:314 prefs.js:84
 msgid "Markdown styling"
 msgstr "Markdown stílus"
 
-#: indicator.js:282
+#: indicator.js:324
 msgid "Decrease font size"
 msgstr "Betűméret csökkentése"
 
-#: indicator.js:290
+#: indicator.js:332
 msgid "Increase font size"
 msgstr "Betűméret növelése"
 
-#: indicator.js:307
+#: indicator.js:349
 msgid "More settings…"
 msgstr "További beállítások…"
 
-#: indicator.js:326
+#: indicator.js:368
 msgid "Note cleared."
 msgstr "Jegyzet törölve."
 
-#: indicator.js:329
+#: indicator.js:371
 msgid "Undo"
 msgstr "Visszavonás"
 
-#: indicator.js:338
+#: indicator.js:380
 msgid "Jot down a quick thought, command, or snippet…"
 msgstr "Írj le egy gyors gondolatot, parancsot vagy kódrészletet…"
 
-#: indicator.js:432 indicator.js:444 indicator.js:527 indicator.js:1682
+#: indicator.js:482 indicator.js:494 indicator.js:577 indicator.js:1940
 msgid "Save to file"
 msgstr "Mentés fájlba"
 
-#: indicator.js:433 indicator.js:461 indicator.js:528 indicator.js:1344
-#: indicator.js:1399
+#: indicator.js:483 indicator.js:511 indicator.js:578 indicator.js:1602
+#: indicator.js:1657
 msgid "History"
 msgstr "Előzmények"
 
-#: indicator.js:434 indicator.js:471 indicator.js:529 indicator.js:1740
+#: indicator.js:484 indicator.js:521 indicator.js:579 indicator.js:1998
 msgid "Export…"
 msgstr "Exportálás…"
 
-#: indicator.js:435 indicator.js:491 indicator.js:530 indicator.js:1202
+#: indicator.js:485 indicator.js:541 indicator.js:580 indicator.js:1460
 msgid "Copy all"
 msgstr "Összes másolása"
 
-#: indicator.js:503 indicator.js:531
+#: indicator.js:553 indicator.js:581
 msgid "Clear"
 msgstr "Törlés"
 
-#: indicator.js:662 indicator.js:1210 indicator.js:1221 indicator.js:1701
+#: indicator.js:713 indicator.js:1468 indicator.js:1479 indicator.js:1959
 #: prefs.js:99
 msgid "Notes"
 msgstr "Jegyzetek"
 
-#: indicator.js:662 indicator.js:1210 indicator.js:1221 indicator.js:1701
+#: indicator.js:713 indicator.js:1468 indicator.js:1479 indicator.js:1959
 #: prefs.js:99
 msgid "Snippets"
 msgstr "Kódok"
 
-#: indicator.js:662 indicator.js:1210 indicator.js:1221 indicator.js:1701
+#: indicator.js:713 indicator.js:1468 indicator.js:1479 indicator.js:1959
 #: prefs.js:99
 msgid "Scratch"
 msgstr "Firka"
 
-#: indicator.js:688
+#: indicator.js:739
 #, javascript-format
 msgid "Font size: %d pt"
 msgstr "Betűméret: %d pt"
 
-#: indicator.js:1165
+#: indicator.js:1423
 #, javascript-format
 msgid "%d word"
 msgid_plural "%d words"
 msgstr[0] "%d szó"
 msgstr[1] "%d szó"
 
-#: indicator.js:1166
+#: indicator.js:1424
 #, javascript-format
 msgid "%d character"
 msgid_plural "%d characters"
 msgstr[0] "%d karakter"
 msgstr[1] "%d karakter"
 
-#: indicator.js:1178
+#: indicator.js:1436
 msgid "Saved"
 msgstr "Mentve"
 
-#: indicator.js:1179
+#: indicator.js:1437
 msgid "Editing…"
 msgstr "Szerkesztés…"
 
-#: indicator.js:1180
+#: indicator.js:1438
 msgid "Save failed"
 msgstr "A mentés sikertelen"
 
-#: indicator.js:1197 indicator.js:1200
+#: indicator.js:1455 indicator.js:1458
 msgid "Copied!"
 msgstr "Másolva!"
 
-#: indicator.js:1343 indicator.js:1398
+#: indicator.js:1601 indicator.js:1656
 #, javascript-format
 msgid "History (%d)"
 msgstr "Előzmények (%d)"
 
-#: indicator.js:1409
+#: indicator.js:1667
 msgid "Close"
 msgstr "Bezárás"
 
-#: indicator.js:1479
+#: indicator.js:1737
 msgid "Delete file"
 msgstr "Fájl törlése"
 
-#: indicator.js:1493
+#: indicator.js:1751
 msgid "No saved files yet"
 msgstr "Még nincsenek mentett fájlok"
 
-#: indicator.js:1517
+#: indicator.js:1775
 msgid "Browse other files…"
 msgstr "Más fájl tallózása…"
 
-#: indicator.js:1549
+#: indicator.js:1807
 #, javascript-format
 msgid "Loaded “%s”"
 msgstr "„%s” betöltve"
 
-#: indicator.js:1554
+#: indicator.js:1812
 #, javascript-format
 msgid "Failed to load file: %s"
 msgstr "A fájl betöltése sikertelen: %s"
 
-#: indicator.js:1569
+#: indicator.js:1827
 #, javascript-format
 msgid "“%s” deleted"
 msgstr "„%s” törölve"
 
-#: indicator.js:1573
+#: indicator.js:1831
 #, javascript-format
 msgid "Failed to delete file: %s"
 msgstr "A fájl törlése sikertelen: %s"
 
-#: indicator.js:1594 indicator.js:1758
-#, fuzzy
+#: indicator.js:1852 indicator.js:2016
 msgid "Markdown files (*.md)"
-msgstr "Markdown fájlok"
+msgstr "Markdown fájlok (*.md)"
 
-#: indicator.js:1595 indicator.js:1759
-#, fuzzy
+#: indicator.js:1853 indicator.js:2017
 msgid "Text files (*.txt)"
-msgstr "Szövegfájlok"
+msgstr "Szövegfájlok (*.txt)"
 
-#: indicator.js:1596 indicator.js:1760
+#: indicator.js:1854 indicator.js:2018
 msgid "All files"
 msgstr "Minden fájl"
 
-#: indicator.js:1611
+#: indicator.js:1869
 msgid "Load Note from File"
 msgstr "Jegyzet betöltése fájlból"
 
-#: indicator.js:1677 indicator.js:1680
+#: indicator.js:1935 indicator.js:1938
 msgid "Saved!"
 msgstr "Elmentve!"
 
-#: indicator.js:1688
+#: indicator.js:1946
 #, javascript-format
 msgid "Saved to “%s”"
 msgstr "Elmentve ide: „%s”"
 
-#: indicator.js:1692
+#: indicator.js:1950
 #, javascript-format
 msgid "Failed to save file: %s"
 msgstr "A fájl mentése sikertelen: %s"
 
-#: indicator.js:1735 indicator.js:1738
+#: indicator.js:1993 indicator.js:1996
 msgid "Exported!"
 msgstr "Exportálva!"
 
-#: indicator.js:1746
+#: indicator.js:2004
 #, javascript-format
 msgid "Exported to “%s”"
 msgstr "Exportálva ide: „%s”"
 
-#: indicator.js:1749
+#: indicator.js:2007
 #, javascript-format
 msgid "Failed to export file: %s"
 msgstr "A fájl exportálása sikertelen: %s"
 
-#: indicator.js:1775
+#: indicator.js:2033
 msgid "Export Note to File"
 msgstr "Jegyzet exportálása fájlba"
 
@@ -306,70 +304,145 @@ msgid "Popup"
 msgstr "Felugró ablak"
 
 #: prefs.js:279
+msgid "Show panel icon"
+msgstr "Ikon megjelenítése a panelen"
+
+#: prefs.js:280
+msgid ""
+"Show the Scratchpad icon in the top bar. You can still open it with the "
+"keyboard shortcut."
+msgstr ""
+"A Jegyzetfüzet ikon megjelenítése a felső sávban. A billentyűparanccsal "
+"továbbra is megnyitható."
+
+#: prefs.js:286
 msgid "Panel position"
 msgstr "Hely a panelen"
 
-#: prefs.js:280
+#: prefs.js:287
 msgid "Left"
 msgstr "Bal"
 
-#: prefs.js:280
+#: prefs.js:287
 msgid "Center"
 msgstr "Közép"
 
-#: prefs.js:280
+#: prefs.js:287
 msgid "Right"
 msgstr "Jobb"
 
-#: prefs.js:287
+#: prefs.js:296
+msgid "Display mode"
+msgstr "Megjelenítési mód"
+
+#: prefs.js:297
+msgid "Show as a top bar dropdown popup or a full-height sidebar"
+msgstr ""
+"Megjelenítés a felső sávból legördülő ablakként vagy teljes magasságú "
+"oldalsávként"
+
+#: prefs.js:298
+msgid "Popup menu"
+msgstr "Legördülő ablak"
+
+#: prefs.js:298
+msgid "Left sidebar"
+msgstr "Bal oldalsáv"
+
+#: prefs.js:298
+msgid "Right sidebar"
+msgstr "Jobb oldalsáv"
+
+#: prefs.js:307
+msgid "Small"
+msgstr "Kicsi"
+
+#: prefs.js:308
+msgid "Medium"
+msgstr "Közepes"
+
+#: prefs.js:309
+msgid "Large"
+msgstr "Nagy"
+
+#: prefs.js:314
+msgid "Custom"
+msgstr "Egyéni"
+
+#: prefs.js:317
+msgid "Size"
+msgstr "Méret"
+
+#: prefs.js:318
+msgid "Preset popup dimensions or set a custom size below"
+msgstr "Előre beállított méretek, vagy egyéni méret alább"
+
+#: prefs.js:322
 msgid "Width"
 msgstr "Szélesség"
 
-#: prefs.js:287 prefs.js:288
+#: prefs.js:322 prefs.js:323 prefs.js:330
 msgid "In pixels"
 msgstr "Képpontban"
 
-#: prefs.js:288
+#: prefs.js:323
 msgid "Height"
 msgstr "Magasság"
 
-#: prefs.js:294
+#: prefs.js:330
+msgid "Automatic (full display height)"
+msgstr "Automatikus (teljes képernyőmagasság)"
+
+#: prefs.js:378
+msgid "Reset size"
+msgstr "Méret visszaállítása"
+
+#: prefs.js:379
+#, javascript-format
+msgid "Default: %d × %d px"
+msgstr "Alapértelmezett: %d × %d px"
+
+#: prefs.js:385
+msgid "Reset to default size"
+msgstr "Visszaállítás alapértelmezett méretre"
+
+#: prefs.js:400
 msgid "Keyboard"
 msgstr "Billentyűzet"
 
-#: prefs.js:295
+#: prefs.js:401
 msgid ""
 "Type a combination like Super+Alt+N and press apply. Leave empty to disable."
 msgstr ""
 "Írj be egy kombinációt (pl. Super+Alt+N), majd nyomd meg az alkalmaz gombot. "
 "Üresen hagyva kikapcsol."
 
-#: prefs.js:298
+#: prefs.js:404
 msgid "Toggle shortcut"
 msgstr "Megnyitás/bezárás gyorsbillentyű"
 
-#: prefs.js:318
+#: prefs.js:424
 msgid "Storage"
 msgstr "Tárolás"
 
-#: prefs.js:319
+#: prefs.js:425
 #, javascript-format
 msgid "Leave empty to use the default: %s"
 msgstr "Üresen hagyva az alapértelmezett: %s"
 
-#: prefs.js:323
+#: prefs.js:429
 msgid "Notes folder"
 msgstr "Jegyzetmappa"
 
-#: prefs.js:335
+#: prefs.js:441
 msgid "Open notes folder"
 msgstr "Jegyzetmappa megnyitása"
 
-#: prefs.js:336
+#: prefs.js:442
 msgid "Open"
 msgstr "Megnyitás"
 
-#: prefs.js:350
+#: prefs.js:456
 msgid "About"
 msgstr "Névjegy"
 

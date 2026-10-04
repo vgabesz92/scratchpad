@@ -51,15 +51,32 @@
     </key>
 
     <key name="popup-width" type="i">
-      <range min="300" max="1200"/>
+      <range min="250" max="1400"/>
       <default>380</default>
       <summary>Popup width in pixels</summary>
     </key>
 
     <key name="popup-height" type="i">
-      <range min="300" max="1000"/>
+      <range min="200" max="1200"/>
       <default>440</default>
       <summary>Popup height in pixels</summary>
+    </key>
+
+    <key name="show-indicator" type="b">
+      <default>true</default>
+      <summary>Show panel icon</summary>
+      <description>Whether to show the Scratchpad icon in the top bar. The popup can still be opened with the keyboard shortcut when hidden.</description>
+    </key>
+
+    <key name="display-mode" type="s">
+      <choices>
+        <choice value="popup"/>
+        <choice value="sidebar-left"/>
+        <choice value="sidebar-right"/>
+      </choices>
+      <default>'popup'</default>
+      <summary>Display mode</summary>
+      <description>How the scratchpad appears: as a dropdown popup, or as a full-height sidebar on the left or right edge of the screen.</description>
     </key>
 
     <key name="panel-position" type="s">

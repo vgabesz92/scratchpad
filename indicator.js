@@ -28,10 +28,10 @@ const COPY_FEEDBACK_MS = 1500;
 const UNDO_BANNER_MS = 5000;
 const FONT_MIN = 6;
 const FONT_MAX = 24;
-const WIDTH_MIN = 300;
-const WIDTH_MAX = 1200;
-const HEIGHT_MIN = 300;
-const HEIGHT_MAX = 1000;
+const WIDTH_MIN = 250;
+const WIDTH_MAX = 1400;
+const HEIGHT_MIN = 200;
+const HEIGHT_MAX = 1200;
 
 const VERTICAL = Clutter.Orientation.VERTICAL;
 const CENTER = Clutter.ActorAlign.CENTER;
@@ -183,13 +183,13 @@ class ScratchpadIndicator extends PanelMenu.Button {
         middleBox.add_child(this._root);
         middleBox.add_child(this._rightHandle);
 
-        const bottomBox = new St.BoxLayout({
+        this._bottomBox = new St.BoxLayout({
             style_class: 'scratchpad-bottom-box',
             x_expand: true,
         });
-        bottomBox.add_child(this._swCornerHandle);
-        bottomBox.add_child(this._bottomHandle);
-        bottomBox.add_child(this._seCornerHandle);
+        this._bottomBox.add_child(this._swCornerHandle);
+        this._bottomBox.add_child(this._bottomHandle);
+        this._bottomBox.add_child(this._seCornerHandle);
 
         this._container = new St.BoxLayout({
             style_class: 'scratchpad-container',
@@ -199,8 +199,50 @@ class ScratchpadIndicator extends PanelMenu.Button {
         });
         this._container.add_child(middleBox);
         this._container.add_child(this._historyDropdownWrapper);
-        this._container.add_child(bottomBox);
+        this._container.add_child(this._bottomBox);
         this.menu.box.add_child(this._container);
+
+        // Custom positioning and flip handling for sidebar display modes
+        const origReposition = this.menu._boxPointer._reposition.bind(this.menu._boxPointer);
+        this.menu._boxPointer._reposition = allocationBox => {
+            const mode = this._settings.get_string('display-mode');
+            if (mode === 'popup') {
+                origReposition(allocationBox);
+                return;
+            }
+
+            const monitorIndex = Main.layoutManager.findIndexForActor(this.container ?? this);
+            const activeIndex = monitorIndex >= 0 ? monitorIndex : Main.layoutManager.primaryIndex;
+            const workarea = Main.layoutManager.getWorkAreaForMonitor(activeIndex);
+
+            const natWidth = allocationBox.get_width();
+            let resX;
+            if (mode === 'sidebar-left')
+                resX = workarea.x;
+            else
+                resX = workarea.x + workarea.width - natWidth;
+
+            const resY = workarea.y;
+
+            let parent = this.menu._boxPointer.get_parent();
+            let success = false, x = 0, y = 0;
+            while (!success && parent) {
+                [success, x, y] = parent.transform_stage_point(resX, resY);
+                if (!success)
+                    parent = parent.get_parent();
+            }
+
+            this.menu._boxPointer.setArrowOrigin(Math.floor(workarea.height / 2));
+            allocationBox.set_origin(Math.floor(x), Math.floor(y));
+            allocationBox.set_size(natWidth, workarea.height);
+        };
+
+        const origUpdateFlip = this.menu._boxPointer._updateFlip.bind(this.menu._boxPointer);
+        this.menu._boxPointer._updateFlip = allocationBox => {
+            const mode = this._settings.get_string('display-mode');
+            if (mode === 'popup')
+                origUpdateFlip(allocationBox);
+        };
 
         // PanelMenu.Button.setMenu() already connects
         // this._onOpenStateChanged(menu, open) — we inherit that connection by
@@ -211,7 +253,7 @@ class ScratchpadIndicator extends PanelMenu.Button {
         this._applyTabNames();
         this._applyEnabledPads();
         this._applyEditorSettings();
-        this._applyPopupSize();
+        this._applyDisplayMode();
         this._applyReducedMotion();
         this._updateTabButtons();
         this._setStatus('saved');
@@ -428,8 +470,10 @@ class ScratchpadIndicator extends PanelMenu.Button {
 
         const infoBox = new St.BoxLayout({style_class: 'scratchpad-footer-info', x_expand: true, y_align: CENTER});
         this._counterLabel = new St.Label({style_class: 'scratchpad-counter', y_align: CENTER});
+        this._counterLabel.clutter_text.single_line_mode = true;
         this._counterLabel.clutter_text.ellipsize = Pango.EllipsizeMode.END;
         this._statusLabel = new St.Label({style_class: 'scratchpad-status', y_align: CENTER});
+        this._statusLabel.clutter_text.single_line_mode = true;
         this._statusLabel.clutter_text.ellipsize = Pango.EllipsizeMode.END;
 
         infoBox.add_child(this._counterLabel);
@@ -614,6 +658,7 @@ class ScratchpadIndicator extends PanelMenu.Button {
             'changed::enabled-pads', () => this._applyEnabledPads(),
             'changed::popup-width', () => this._applyPopupSize(),
             'changed::popup-height', () => this._applyPopupSize(),
+            'changed::display-mode', () => this._applyDisplayMode(),
             'changed::data-directory', () => this._onDataDirChanged(),
             'changed::active-tab', () => {
                 const tab = clamp(this._settings.get_int('active-tab'), 0, TOTAL_PADS - 1);
@@ -722,6 +767,23 @@ class ScratchpadIndicator extends PanelMenu.Button {
             this._entry.clutter_text.color = new Color({red: 255, green: 255, blue: 255, alpha: 255});
     }
 
+    _getEditorWidth() {
+        if (this._entry?.is_mapped() && this._entry.width > 0) {
+            const padding = this._entry.get_theme_node()?.get_horizontal_padding() ?? 28;
+            return Math.max(0, this._entry.width - padding);
+        }
+        const w = clamp(this._settings.get_int('popup-width'), WIDTH_MIN, WIDTH_MAX);
+        return Math.max(0, w - 56);
+    }
+
+    _getHrLine() {
+        const width = this._getEditorWidth();
+        const size = clamp(this._settings.get_int('font-size'), FONT_MIN, FONT_MAX);
+        const charWidth = Math.max(8, Math.round(size * 1.35));
+        const count = Math.max(3, Math.floor((width * 0.85) / charWidth));
+        return '─'.repeat(count);
+    }
+
     _updateFormatting(index = this._activeTab, enableSyntax, enableMarkdown) {
         if (!this._entry?.clutter_text)
             return;
@@ -736,7 +798,14 @@ class ScratchpadIndicator extends PanelMenu.Button {
 
             const text = ct.get_text() || this._texts[index] || '';
             const cursorPos = ct.has_key_focus() ? this._getCursor() : -1;
-            const attrList = createSyntaxAttributes(text, isSnippets, enableSyntax, enableMarkdown, cursorPos);
+
+            // Measure the usable content width for width-dependent formatting
+            // (e.g. horizontal rules).  Use the entry's allocation if mapped,
+            // otherwise fall back to the configured popup width minus padding.
+            const editorWidthPx = this._getEditorWidth();
+            const fontSize = clamp(this._settings.get_int('font-size'), FONT_MIN, FONT_MAX);
+
+            const attrList = createSyntaxAttributes(text, isSnippets, enableSyntax, enableMarkdown, cursorPos, editorWidthPx, fontSize);
 
             if (attrList) {
                 ct.set_attributes(attrList);
@@ -820,8 +889,16 @@ class ScratchpadIndicator extends PanelMenu.Button {
         pan.set_max_n_points(1);
 
         pan.connect('recognize', () => {
+            const isSidebar = this._settings.get_string('display-mode') !== 'popup';
             this._dragStartWidth = clamp(this._settings.get_int('popup-width'), WIDTH_MIN, WIDTH_MAX);
-            this._dragStartHeight = clamp(this._settings.get_int('popup-height'), HEIGHT_MIN, HEIGHT_MAX);
+            if (isSidebar) {
+                const monitorIndex = Main.layoutManager.findIndexForActor(this.container ?? this);
+                const activeIndex = monitorIndex >= 0 ? monitorIndex : Main.layoutManager.primaryIndex;
+                const workarea = Main.layoutManager.getWorkAreaForMonitor(activeIndex);
+                this._dragStartHeight = workarea ? workarea.height : clamp(this._settings.get_int('popup-height'), HEIGHT_MIN, HEIGHT_MAX);
+            } else {
+                this._dragStartHeight = clamp(this._settings.get_int('popup-height'), HEIGHT_MIN, HEIGHT_MAX);
+            }
             this._currentDragWidth = this._dragStartWidth;
             this._currentDragHeight = this._dragStartHeight;
             handle.add_style_pseudo_class('active');
@@ -852,7 +929,13 @@ class ScratchpadIndicator extends PanelMenu.Button {
                 targetHeight = clamp(this._dragStartHeight + Math.round(dy), HEIGHT_MIN, maxAllowedHeight);
             }
 
-            if (targetWidth !== this._currentDragWidth || targetHeight !== this._currentDragHeight) {
+            const isSidebar = this._settings.get_string('display-mode') !== 'popup';
+            if (isSidebar) {
+                if (targetWidth !== this._currentDragWidth) {
+                    this._currentDragWidth = targetWidth;
+                    this._root.style = `width: ${targetWidth}px;`;
+                }
+            } else if (targetWidth !== this._currentDragWidth || targetHeight !== this._currentDragHeight) {
                 this._currentDragWidth = targetWidth;
                 this._currentDragHeight = targetHeight;
                 this._root.style = `width: ${targetWidth}px; height: ${targetHeight}px;`;
@@ -860,17 +943,22 @@ class ScratchpadIndicator extends PanelMenu.Button {
         });
 
         const finishDrag = save => {
+            const isSidebar = this._settings.get_string('display-mode') !== 'popup';
             handle.remove_style_pseudo_class('active');
             global.stage.set_cursor_type(Clutter.CursorType.DEFAULT);
             if (save) {
                 if (this._currentDragWidth !== undefined && this._currentDragWidth !== this._dragStartWidth)
                     this._settings.set_int('popup-width', this._currentDragWidth);
-                if (this._currentDragHeight !== undefined && this._currentDragHeight !== this._dragStartHeight)
+                if (!isSidebar && this._currentDragHeight !== undefined && this._currentDragHeight !== this._dragStartHeight)
                     this._settings.set_int('popup-height', this._currentDragHeight);
             } else {
                 const w = this._dragStartWidth ?? clamp(this._settings.get_int('popup-width'), WIDTH_MIN, WIDTH_MAX);
-                const h = this._dragStartHeight ?? clamp(this._settings.get_int('popup-height'), HEIGHT_MIN, HEIGHT_MAX);
-                this._root.style = `width: ${w}px; height: ${h}px;`;
+                if (isSidebar) {
+                    this._root.style = `width: ${w}px;`;
+                } else {
+                    const h = this._dragStartHeight ?? clamp(this._settings.get_int('popup-height'), HEIGHT_MIN, HEIGHT_MAX);
+                    this._root.style = `width: ${w}px; height: ${h}px;`;
+                }
             }
             this._dragStartWidth = undefined;
             this._dragStartHeight = undefined;
@@ -886,9 +974,65 @@ class ScratchpadIndicator extends PanelMenu.Button {
     }
 
     _applyPopupSize() {
+        const mode = this._settings.get_string('display-mode');
         const w = clamp(this._settings.get_int('popup-width'), WIDTH_MIN, WIDTH_MAX);
-        const h = clamp(this._settings.get_int('popup-height'), HEIGHT_MIN, HEIGHT_MAX);
-        this._root.style = `width: ${w}px; height: ${h}px;`;
+
+        if (mode === 'sidebar-left' || mode === 'sidebar-right') {
+            this._root.style = `width: ${w}px;`;
+        } else {
+            const h = clamp(this._settings.get_int('popup-height'), HEIGHT_MIN, HEIGHT_MAX);
+            this._root.style = `width: ${w}px; height: ${h}px;`;
+        }
+
+        // Re-format so width-dependent elements (e.g. HR lines) adapt
+        if (this._loaded && !this._destroyed)
+            this._addIdle('format', () => this._updateFormatting());
+    }
+
+    _applyDisplayMode() {
+        const mode = this._settings.get_string('display-mode');
+        const boxPointer = this.menu?._boxPointer;
+        if (!boxPointer)
+            return;
+
+        boxPointer.remove_style_class_name('scratchpad-sidebar');
+        boxPointer.remove_style_class_name('scratchpad-sidebar-left');
+        boxPointer.remove_style_class_name('scratchpad-sidebar-right');
+
+        if (mode === 'sidebar-left') {
+            boxPointer.add_style_class_name('scratchpad-sidebar');
+            boxPointer.add_style_class_name('scratchpad-sidebar-left');
+            boxPointer.updateArrowSide(St.Side.LEFT);
+            if (this._bottomBox)
+                this._bottomBox.visible = false;
+            if (this._leftHandle)
+                this._leftHandle.visible = false;
+            if (this._rightHandle)
+                this._rightHandle.visible = true;
+        } else if (mode === 'sidebar-right') {
+            boxPointer.add_style_class_name('scratchpad-sidebar');
+            boxPointer.add_style_class_name('scratchpad-sidebar-right');
+            boxPointer.updateArrowSide(St.Side.RIGHT);
+            if (this._bottomBox)
+                this._bottomBox.visible = false;
+            if (this._leftHandle)
+                this._leftHandle.visible = true;
+            if (this._rightHandle)
+                this._rightHandle.visible = false;
+        } else {
+            // 'popup'
+            boxPointer.updateArrowSide(St.Side.TOP);
+            if (this._bottomBox)
+                this._bottomBox.visible = true;
+            if (this._leftHandle)
+                this._leftHandle.visible = true;
+            if (this._rightHandle)
+                this._rightHandle.visible = true;
+        }
+
+        this._applyPopupSize();
+        if (boxPointer.mapped)
+            boxPointer.queue_relayout();
     }
 
     _adjustFont(delta) {
@@ -1169,7 +1313,7 @@ class ScratchpadIndicator extends PanelMenu.Button {
 
             // 1. Horizontal rule: ---, ***, ___, ───
             if (/^[ \t]*([*\-_─―—]){3,}[ \t]*$/.test(line)) {
-                const hr = '────────────────────────────────────────';
+                const hr = this._getHrLine();
                 ct.delete_text(lineStart, lineEnd);
                 ct.insert_text(hr, lineStart);
                 const afterHr = lineStart + hr.length;
@@ -1983,6 +2127,7 @@ class ScratchpadIndicator extends PanelMenu.Button {
     _onOpenStateChanged(_menu, open) {
         const ct = this._entry.clutter_text;
         if (open) {
+            this._applyDisplayMode();
             this._updateEntryStyle(this._activeTab);
             if (this._loaded)
                 this._showPad(this._activeTab);

@@ -19,8 +19,11 @@ export default class ScratchpadExtension extends Extension {
         this._indicator = new ScratchpadIndicator(this, this._settings);
         Main.panel.addToStatusArea(this.uuid, this._indicator, 0, this._position());
 
+        this._applyIndicatorVisibility();
+
         this._settings.connectObject(
             'changed::panel-position', () => this._moveIndicator(),
+            'changed::show-indicator', () => this._applyIndicatorVisibility(),
             this);
 
         Main.wm.addKeybinding(
@@ -56,5 +59,11 @@ export default class ScratchpadExtension extends Extension {
         const container = this._indicator.container;
         container.get_parent()?.remove_child(container);
         boxes[this._position()].insert_child_at_index(container, 0);
+    }
+
+    _applyIndicatorVisibility() {
+        if (!this._indicator)
+            return;
+        this._indicator.visible = this._settings.get_boolean('show-indicator');
     }
 }
